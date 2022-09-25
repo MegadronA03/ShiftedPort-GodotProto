@@ -108,7 +108,7 @@ func print_usage(cmd):#TODO: integrate
 func process_command(text):#TODO: integrate
 	if text == "":
 		return
-
+	
 	command_history.append(text)
 	commandhistoryline = command_history.size()
 	
@@ -171,31 +171,37 @@ func _ready():
 	position = mwnd.size*.25
 	close_requested.connect(_close)
 	
-	var body = Panel.new()
-	body.anchor_top = 0.0
-	body.anchor_left = 0.0
-	body.anchor_bottom = 1.0
-	body.anchor_right = 1.0
-	add_child(body)
+	var t
 	
-	var bodyc = VBoxContainer.new()
-	bodyc.anchor_top = 0.0
-	bodyc.anchor_left = 0.0
-	bodyc.anchor_bottom = 1.0
-	bodyc.anchor_right = 1.0
-	body.add_child(bodyc)
+	t = Panel.new()
+	var body = t
+	t.anchor_top = 0.0
+	t.anchor_left = 0.0
+	t.anchor_bottom = 1.0
+	t.anchor_right = 1.0
+	add_child(t)
 	
-	content = RichTextLabel.new()
-	content.size_flags_vertical = content.SIZE_EXPAND_FILL
-	content.selection_enabled = true
-	content.scroll_following = true
-	content.bbcode_enabled = true
-	content.context_menu_enabled = true
-	bodyc.add_child(content)
+	t = VBoxContainer.new()
+	var bodyc = t
+	t.anchor_top = 0.0
+	t.anchor_left = 0.0
+	t.anchor_bottom = 1.0
+	t.anchor_right = 1.0
+	body.add_child(t)
 	
-	input = LineEdit.new()
-	bodyc.add_child(input)
-	input.text_submitted.connect(_execscr)
+	t = RichTextLabel.new()
+	content = t
+	t.size_flags_vertical = t.SIZE_EXPAND_FILL
+	t.selection_enabled = true
+	t.scroll_following = true
+	t.bbcode_enabled = true
+	t.context_menu_enabled = true
+	bodyc.add_child(t)
+	
+	t = LineEdit.new()
+	input = t
+	t.text_submitted.connect(_execscr)
+	bodyc.add_child(t)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -205,27 +211,8 @@ func _process(delta):
 
 func _execscr(txt): #TODO: temporary code, should be refactored
 	input.clear()
-	#command_history.append(txt)
-	#commandhistoryline = command_history.size()
 	output_text(str("[color=gray]] ", txt, "[/color]"))
 	process_command(txt)
-	#var is_cmd = (txt[0] == "/")
-	#if is_cmd:
-	#	var txtp = txt.substr(1)
-	#	if (txtp in commands):
-	#		commands[txtp][0].call()
-	#	else:
-	#		output_text("[color=orange]Unknown command[/color]")
-	#else:
-	#	var error = expression.parse(txt, [])
-	#	if error != OK:
-	#		print(expression.get_error_text())
-	#		return
-	#	var result = expression.execute([], inode, true)
-	#	if expression.has_execute_failed():
-	#		output_text("[color=red]ERROR: "+expression.get_error_text()+"[/color]")
-	#	else:
-	#		output_text(str(result)+"\n")
 
 
 func _input(event):
