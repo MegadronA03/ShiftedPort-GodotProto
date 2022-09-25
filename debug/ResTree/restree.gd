@@ -1,4 +1,5 @@
 extends Window
+class_name ResTree
 
 var inode
 var layout = {}
@@ -150,7 +151,7 @@ func _toparent():
 
 func _openconsole():
 	var r = get_node("/root/Iroot")
-	r.add_child(r.conscript.new(inode))
+	r.add_child(Console.new(inode))
 	pass
 
 func _close():

@@ -8,6 +8,22 @@
 
 config_version=5
 
+_global_script_classes=[{
+"base": "Window",
+"class": &"Console",
+"language": &"GDScript",
+"path": "res://debug/console.gd"
+}, {
+"base": "Window",
+"class": &"ResTree",
+"language": &"GDScript",
+"path": "res://debug/ResTree/restree.gd"
+}]
+_global_script_class_icons={
+"Console": "",
+"ResTree": ""
+}
+
 [application]
 
 config/name="ShiftedPort"

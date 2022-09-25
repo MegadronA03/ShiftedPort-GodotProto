@@ -1,4 +1,5 @@
 extends Window
+class_name Console
 
 enum {
 	ARG_INT,
@@ -30,7 +31,7 @@ var commands = {
 		inst = get_node(args[0])
 	if (is_instance_valid(inst)):
 		var r = get_node("/root/Iroot")
-		var rwnd = r.resscript.new(inst) #TODO: into external container
+		var rwnd = ResTree.new(inst) #TODO: into external container
 		r.add_child(rwnd)
 		return "OK"
 	else:
@@ -53,7 +54,7 @@ var commands = {
 "version": [func(args):
 	var export_config = ConfigFile.new()
 	export_config.load("res://export_presets.cfg")
-	output_text(str("[color=cyan]", export_config.get_value("preset.0.options", 'application/product_version'), "[/color]"))
+	return str("[color=cyan]", export_config.get_value("preset.0.options", 'application/product_version'), "[/color]")
 ,[]],
 "run_as": [func(args):
 	var inst = inode
