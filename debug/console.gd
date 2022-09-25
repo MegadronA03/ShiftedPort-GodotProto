@@ -105,6 +105,9 @@ func print_usage(cmd):#TODO: integrate
 
 
 func process_command(text):#TODO: integrate
+	if text == "":
+		return
+
 	command_history.append(text)
 	commandhistoryline = command_history.size()
 	
