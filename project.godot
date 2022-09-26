@@ -9,10 +9,25 @@
 config_version=5
 
 _global_script_classes=[{
+"base": "StaticBody3D",
+"class": &"BasicBlock",
+"language": &"GDScript",
+"path": "res://addons/devblocks/blocks/basic_block.gd"
+}, {
+"base": "BasicBlock",
+"class": &"ColoredBlock",
+"language": &"GDScript",
+"path": "res://addons/devblocks/blocks/colored_block.gd"
+}, {
 "base": "Window",
 "class": &"Console",
 "language": &"GDScript",
 "path": "res://debug/console.gd"
+}, {
+"base": "ColoredBlock",
+"class": &"EmissionBlock",
+"language": &"GDScript",
+"path": "res://addons/devblocks/blocks/emission_block.gd"
 }, {
 "base": "Camera3D",
 "class": &"FreeCam",
@@ -25,7 +40,10 @@ _global_script_classes=[{
 "path": "res://debug/ResTree/restree.gd"
 }]
 _global_script_class_icons={
+"BasicBlock": "",
+"ColoredBlock": "",
 "Console": "",
+"EmissionBlock": "",
 "FreeCam": "",
 "ResTree": ""
 }
@@ -44,7 +62,3 @@ toggle_console={
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":96,"unicode":96,"echo":false,"script":null)
 ]
 }
-
-[rendering]
-
-vulkan/rendering/back_end=1

@@ -1,0 +1,117 @@
+[gd_scene load_steps=6 format=3 uid="uid://wuyeafp364mp"]
+
+[ext_resource type="PackedScene" uid="uid://dj26sacnhty4r" path="res://addons/devblocks/blocks/basic_block.tscn" id="1_hi0vw"]
+[ext_resource type="PackedScene" uid="uid://camvcri7e11vi" path="res://addons/devblocks/blocks/colored_block.tscn" id="2_kjslv"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_mfyh2"]
+sky_top_color = Color(1, 1, 1, 1)
+sky_horizon_color = Color(1, 1, 1, 1)
+ground_bottom_color = Color(0.498039, 0.498039, 0.498039, 1)
+ground_horizon_color = Color(0.752941, 0.752941, 0.752941, 1)
+
+[sub_resource type="Sky" id="Sky_pr6j7"]
+sky_material = SubResource("ProceduralSkyMaterial_mfyh2")
+radiance_size = 0
+
+[sub_resource type="Environment" id="Environment_ohh10"]
+background_mode = 2
+background_energy_multiplier = 2.0
+sky = SubResource("Sky_pr6j7")
+ambient_light_source = 1
+tonemap_mode = 3
+ssr_enabled = true
+ssr_max_steps = 16
+ssao_enabled = true
+sdfgi_enabled = true
+sdfgi_use_occlusion = true
+sdfgi_min_cell_size = 0.13
+sdfgi_y_scale = 2
+sdfgi_normal_bias = 1.125
+sdfgi_probe_bias = 1.125
+glow_enabled = true
+glow_strength = 0.5
+fog_light_color = Color(1, 1, 1, 1)
+fog_light_energy = 0.25
+fog_density = 0.025
+
+[node name="origins_test" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_ohh10")
+
+[node name="TestMap" type="Node3D" parent="WorldEnvironment"]
+
+[node name="Title" type="Node3D" parent="WorldEnvironment/TestMap"]
+
+[node name="Camera3d" type="Camera3D" parent="WorldEnvironment/TestMap/Title"]
+fov = 120.0
+
+[node name="BasicBlock2" parent="WorldEnvironment/TestMap/Title" instance=ExtResource("1_hi0vw")]
+transform = Transform3D(1, 0, 0, 0, 3, 0, 0, 0, 1, -1.5, 0, -1)
+block_style = 12
+
+[node name="BasicBlock3" parent="WorldEnvironment/TestMap/Title" instance=ExtResource("1_hi0vw")]
+transform = Transform3D(1.5, 0, 0, 0, 5, 0, 0, 0, 2, 1.75, 0, -2)
+block_style = 12
+
+[node name="BasicBlock4" parent="WorldEnvironment/TestMap/Title" instance=ExtResource("1_hi0vw")]
+transform = Transform3D(3, 0, 0, 0, 6.5, 0, 0, 0, 3, 4, 1.75, -1.5)
+block_style = 12
+
+[node name="BasicBlock5" parent="WorldEnvironment/TestMap/Title" instance=ExtResource("1_hi0vw")]
+transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 1, -1.75, 0.25, 0)
+block_style = 12
+
+[node name="ColoredBlock2" parent="WorldEnvironment/TestMap/Title" instance=ExtResource("2_kjslv")]
+transform = Transform3D(9, 0, 0, 0, 1, 0, 0, 0, 9, 0, -2, -5.5)
+block_style = 1
+
+[node name="BasicBlock" parent="WorldEnvironment/TestMap/Title" instance=ExtResource("1_hi0vw")]
+transform = Transform3D(4, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, -1.25, -0.5)
+block_style = 1
+
+[node name="BasicBlock6" parent="WorldEnvironment/TestMap/Title" instance=ExtResource("1_hi0vw")]
+transform = Transform3D(5, 0, 0, 0, 7.5, 0, 0, 0, 3, -5, 2.25, -9.5)
+block_style = 12
+
+[node name="BasicBlock7" parent="WorldEnvironment/TestMap/Title" instance=ExtResource("1_hi0vw")]
+transform = Transform3D(3, 0, 0, 0, 4, 0, 0, 0, 3, -1.5, 0.5, -8)
+block_style = 12
+
+[node name="BasicBlock8" parent="WorldEnvironment/TestMap/Title" instance=ExtResource("1_hi0vw")]
+transform = Transform3D(5, 0, 0, 0, 6.5, 0, 0, 0, 3, 4.5, 1.75, -9.5)
+block_style = 12
+
+[node name="Hub" type="Node3D" parent="WorldEnvironment/TestMap"]
+
+[node name="SpawnZone" parent="WorldEnvironment/TestMap/Hub" instance=ExtResource("2_kjslv")]
+transform = Transform3D(4, 0, 0, 0, 1.125, 0, 0, 0, 6, 0, -1.25, 8)
+block_color = Color(0.423529, 0.670588, 1, 1)
+block_style = 4
+
+[node name="Ground" parent="WorldEnvironment/TestMap/Hub" instance=ExtResource("1_hi0vw")]
+transform = Transform3D(8, 0, 0, 0, 1, 0, 0, 0, 15, 0, -1.25, 7.5)
+block_style = 1
+
+[node name="VoxelSandbox" type="Node3D" parent="WorldEnvironment/TestMap"]
+
+[node name="BasicBlock" parent="WorldEnvironment/TestMap/VoxelSandbox" instance=ExtResource("1_hi0vw")]
+transform = Transform3D(15, 0, 0, 0, 1, 0, 0, 0, 1, 11.5, -1.25, 0.5)
+block_style = 1
+
+[node name="BasicBlock2" parent="WorldEnvironment/TestMap/VoxelSandbox" instance=ExtResource("1_hi0vw")]
+transform = Transform3D(15, 0, 0, 0, 1, 0, 0, 0, 1, 11.5, -1.25, 14.5)
+block_style = 1
+
+[node name="BasicBlock3" parent="WorldEnvironment/TestMap/VoxelSandbox" instance=ExtResource("1_hi0vw")]
+transform = Transform3D(15, 0, 0, 0, 1, 0, 0, 0, 15, 11.5, -2.25, 7.5)
+block_color_group = 4
+block_style = 1
+
+[node name="BasicBlock4" parent="WorldEnvironment/TestMap/VoxelSandbox" instance=ExtResource("1_hi0vw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 13, 4.5, -1.25, 7.5)
+block_style = 1
+
+[node name="BasicBlock5" parent="WorldEnvironment/TestMap/VoxelSandbox" instance=ExtResource("1_hi0vw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 13, 18.5, -1.25, 7.5)
+block_style = 1
