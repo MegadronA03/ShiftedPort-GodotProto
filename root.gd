@@ -17,9 +17,9 @@ func _ready():
 	#add_child(t)
 	#c = t
 	t = Window.new()
-	#t.transparent_bg = true
+	t.transparent_bg = true
 	t.size = floor(size*0.5)
-	t.position = size*.25
+	t.position = size*0.25
 	#t.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	add_child(t)
 	c = t

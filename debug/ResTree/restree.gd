@@ -1,5 +1,5 @@
-extends Window
 class_name ResTree
+extends Window
 
 var inode
 var layout = {}

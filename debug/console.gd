@@ -1,5 +1,5 @@
-extends Window
 class_name Console
+extends Window
 
 enum {
 	ARG_INT,
