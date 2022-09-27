@@ -69,7 +69,12 @@ var commands = {
 "echo": [func(args):
 	if !(args.size() < 1):
 		return str(args[0])
-,[ARG_STRING]]
+,[ARG_STRING]],
+"freecam": [func(args):
+	var r = get_node("/root/Iroot")
+	var t = FreeCam.new()
+	r.add_child(t)
+,[]]
 }
 
 func check_type(string, type):
@@ -165,8 +170,8 @@ func _ready():
 		inode = get_tree().get_root()
 	title = "Console: " + inode.get_class() + " " + str(inode.name)
 	var mwnd = get_node("/root/Iroot")
-	transparent_bg = true
-	transparent = true
+	#transparent_bg = true
+	#transparent = true
 	size = mwnd.size*.5
 	position = mwnd.size*.25
 	close_requested.connect(_close)
@@ -216,11 +221,10 @@ func _execscr(txt): #TODO: temporary code, should be refactored
 
 
 func _input(event):
-	if event is InputEventKey and event.is_pressed():
-		if event.keycode == KEY_UP:
-			goto_command_history(-1)
-		if event.keycode == KEY_DOWN:
-			goto_command_history(1)
+	if event.is_action_pressed("ui_down"):
+		goto_command_history(1)
+	if event.is_action_pressed("ui_up"):
+		goto_command_history(-1)
 
 func _close():
 	queue_free()

@@ -1,14 +1,14 @@
 extends Control
+#@onready
+var test_scene = preload("res://game/scenes/origins_test.tscn")
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	set_name("Iroot")
-	var ctrlwnd = Console.new() #TODO: into external container
-	ctrlwnd.set_name("wnd")
-	add_child(ctrlwnd)
-	#var t
+	var t
 	#var c
-	
+	t = test_scene.instantiate()
+	add_child(t)
 	#var w = WorldEnvironment.new()
 	#add_child(w)
 	#t = Camera3D.new()
@@ -39,6 +39,13 @@ func _ready():
 	#t.keep_aspect = Camera3D.KEEP_WIDTH
 	#c.add_child(t)
 
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	pass
+
+func _input(event):
+	#if event is InputEventKey and event.is_pressed():
+	if event.is_action_pressed("toggle_console"): #`
+		var ctrlwnd = Console.new()
+		add_child(ctrlwnd)

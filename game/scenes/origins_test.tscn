@@ -17,18 +17,21 @@ radiance_size = 0
 background_mode = 2
 background_energy_multiplier = 2.0
 sky = SubResource("Sky_pr6j7")
-ambient_light_source = 1
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 4.0
+reflected_light_source = 1
 ssr_enabled = true
 ssr_max_steps = 16
 ssao_enabled = true
 ssil_enabled = true
-sdfgi_enabled = true
 sdfgi_use_occlusion = true
 sdfgi_min_cell_size = 0.13
+sdfgi_cascade0_distance = 8.32
+sdfgi_max_distance = 133.12
 sdfgi_y_scale = 2
 sdfgi_normal_bias = 1.125
 sdfgi_probe_bias = 1.125
-glow_enabled = true
 glow_strength = 0.5
 fog_light_color = Color(1, 1, 1, 1)
 fog_light_energy = 0.25
@@ -63,7 +66,7 @@ transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 1, -1.75, 0.25, 0)
 block_style = 12
 
 [node name="ColoredBlock2" parent="WorldEnvironment/TestMap/Title" instance=ExtResource("2_kjslv")]
-transform = Transform3D(9, 0, 0, 0, 1, 0, 0, 0, 9, 0, -2, -5.5)
+transform = Transform3D(16, 0, 0, 0, 1, 0, 0, 0, 9, 0, -2, -5.5)
 block_style = 1
 
 [node name="BasicBlock" parent="WorldEnvironment/TestMap/Title" instance=ExtResource("1_hi0vw")]
@@ -71,15 +74,15 @@ transform = Transform3D(4, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, -1.25, -0.5)
 block_style = 1
 
 [node name="BasicBlock6" parent="WorldEnvironment/TestMap/Title" instance=ExtResource("1_hi0vw")]
-transform = Transform3D(5, 0, 0, 0, 7.5, 0, 0, 0, 3, -5, 2.25, -9.5)
+transform = Transform3D(5, 0, 0, 0, 7.5, 0, 0, 0, 3, 1, 2.25, -9.5)
 block_style = 12
 
 [node name="BasicBlock7" parent="WorldEnvironment/TestMap/Title" instance=ExtResource("1_hi0vw")]
-transform = Transform3D(3, 0, 0, 0, 4, 0, 0, 0, 3, -1.5, 0.5, -8)
+transform = Transform3D(3, 0, 0, 0, 4, 0, 0, 0, 3, -1, 0.5, -8)
 block_style = 12
 
 [node name="BasicBlock8" parent="WorldEnvironment/TestMap/Title" instance=ExtResource("1_hi0vw")]
-transform = Transform3D(5, 0, 0, 0, 6.5, 0, 0, 0, 3, 4.5, 1.75, -9.5)
+transform = Transform3D(5, 0, 0, 0, 8, 0, 0, 0, 3, -4.75, 2.5, -14)
 block_style = 12
 
 [node name="Hub" type="Node3D" parent="WorldEnvironment/TestMap"]
