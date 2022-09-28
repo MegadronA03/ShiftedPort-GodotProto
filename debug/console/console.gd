@@ -221,6 +221,8 @@ func _execscr(txt): #TODO: temporary code, should be refactored
 
 
 func _input(event):
+	if event.is_action_pressed("ui_escape"):
+		_close()
 	if event.is_action_pressed("ui_down"):
 		goto_command_history(1)
 	if event.is_action_pressed("ui_up"):
