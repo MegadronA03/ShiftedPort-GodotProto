@@ -2,14 +2,12 @@ class_name FreeCam
 extends Window
 
 @onready var cam = Camera3D.new()
+
 var mouse_lock = false
-var axis_dir = Vector3i(0,0,0)
+var axis_dir = Vector3i()
 var speed = 8.0
 var sensetivity = 0.008
 var cam_up = Vector3(0,1,0).normalized()
-
-func igs(a, b):
-	return Input.get_action_strength(a) - Input.get_action_strength(b)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -34,6 +32,8 @@ func _wresize():
 	pass
 
 func _close():
+	if mouse_lock:
+		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	queue_free()
 
 func _input(event):
@@ -46,11 +46,13 @@ func _input(event):
 			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 		else:
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-	if mouse_lock && event is InputEventMouseMotion:
-		var m = sensetivity * event.relative
-		cam.rotate(cam_up,-m.x)
-		cam.rotate(cam.basis.x.normalized(),-m.y)
-	if event is InputEventScreenDrag:
+	if mouse_lock: #should node even bother?
+		if event is InputEventMouseMotion: #node should bother checking input
+			var m = sensetivity * event.relative
+			cam.rotate(cam_up,-m.x)
+			cam.rotate(cam.basis.x.normalized(),-m.y)
+	if event is InputEventScreenDrag: #controls for touch devices
 		pass
-	
-	axis_dir = Vector3(igs("cam_right", "cam_left"), igs("cam_up", "cam_down"), igs("cam_backward", "cam_forward"))
+	for axis in 3: #update movement direction
+		var dir = "xyz"[axis] #0 - x; 1 - y; 2 - z
+		axis_dir[axis] = Input.get_action_strength("game_v"+dir+"+") - Input.get_action_strength("game_v"+dir+"-")
