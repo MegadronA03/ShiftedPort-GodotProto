@@ -207,6 +207,7 @@ func _ready():
 	input = t
 	t.text_submitted.connect(_execscr)
 	bodyc.add_child(t)
+	t.grab_focus()
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

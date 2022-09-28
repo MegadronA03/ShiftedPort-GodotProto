@@ -2,13 +2,14 @@ class_name FreeCam
 extends Window
 
 @onready var cam = Camera3D.new()
-
-var controls = [["game_vx+","game_vx-"],["game_vy+","game_vy-"],["game_vz+","game_vz-"]]
-var pressed = [[false,false],[false,false],[false,false],false]
+var mouse_lock = false
 var axis_dir = Vector3i(0,0,0)
 var speed = 8.0
 var sensetivity = 0.008
 var cam_up = Vector3(0,1,0).normalized()
+
+func igs(a, b):
+	return Input.get_action_strength(a) - Input.get_action_strength(b)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -40,23 +41,16 @@ func _input(event):
 	if event.is_action_pressed("ui_escape"):
 		_close()
 	if event.is_action_pressed("game_toggle_mlock"):
-		pressed[3] = !pressed[3]
-		if pressed[3]:
+		mouse_lock = !mouse_lock
+		if mouse_lock:
 			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 		else:
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-	if pressed[3]:
-		if event is InputEventMouseMotion:
-			var m = sensetivity * event.relative
-			cam.rotate(cam_up,-m.x)
-			cam.rotate(cam.basis.x.normalized(),-m.y)
+	if mouse_lock && event is InputEventMouseMotion:
+		var m = sensetivity * event.relative
+		cam.rotate(cam_up,-m.x)
+		cam.rotate(cam.basis.x.normalized(),-m.y)
 	if event is InputEventScreenDrag:
 		pass
-	for group in 3:
-		for action in 2:
-			if event.is_action(controls[group][action]):
-				pressed[group][action] = event.pressed
-				if event.pressed:
-					axis_dir[group] = [1,-1][action]
-				else:
-					axis_dir[group] = [0,[-1,1][action]][int(pressed[group][[1,0][action]])]
+	
+	axis_dir = Vector3(igs("cam_right", "cam_left"), igs("cam_up", "cam_down"), igs("cam_backward", "cam_forward"))
