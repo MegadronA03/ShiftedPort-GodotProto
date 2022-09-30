@@ -1,5 +1,7 @@
-extends Node
+extends Node3D
 
+var voxel_min_size = 1
+var base_size = 8 #should be only in base of 2
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
