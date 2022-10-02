@@ -1,3 +1,4 @@
+class_name VolumeRoot
 extends Node3D
 
 var voxel_min_size = 1

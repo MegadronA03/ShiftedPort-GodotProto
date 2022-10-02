@@ -1,3 +1,4 @@
+class_name TriangData
 extends Node
 
 var triangulation_table = [

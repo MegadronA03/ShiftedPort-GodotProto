@@ -38,6 +38,16 @@ _global_script_classes=[{
 "class": &"ResTree",
 "language": &"GDScript",
 "path": "res://debug/ResTree/restree.gd"
+}, {
+"base": "Node",
+"class": &"TriangData",
+"language": &"GDScript",
+"path": "res://game/world/entity/svo_volume/tri_table.gd"
+}, {
+"base": "Node3D",
+"class": &"VolumeRoot",
+"language": &"GDScript",
+"path": "res://game/world/entity/svo_volume/root.gd"
 }]
 _global_script_class_icons={
 "BasicBlock": "",
@@ -45,7 +55,9 @@ _global_script_class_icons={
 "Console": "",
 "EmissionBlock": "",
 "FreeCam": "",
-"ResTree": ""
+"ResTree": "",
+"TriangData": "",
+"VolumeRoot": ""
 }
 
 [application]
