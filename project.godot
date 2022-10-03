@@ -53,6 +53,11 @@ _global_script_classes=[{
 "class": &"VolumeRoot",
 "language": &"GDScript",
 "path": "res://game/world/entity/svo_volume/root.gd"
+}, {
+"base": "Node3D",
+"class": &"VoxelWorld",
+"language": &"GDScript",
+"path": "res://game/world/entity/svo_volume/voxel_world.gd"
 }]
 _global_script_class_icons={
 "BasicBlock": "",
@@ -63,7 +68,8 @@ _global_script_class_icons={
 "ResTree": "",
 "TriangData": "",
 "Volume": "",
-"VolumeRoot": ""
+"VolumeRoot": "",
+"VoxelWorld": ""
 }
 
 [application]
