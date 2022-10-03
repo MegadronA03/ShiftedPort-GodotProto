@@ -45,6 +45,11 @@ _global_script_classes=[{
 "path": "res://game/world/entity/svo_volume/tri_table.gd"
 }, {
 "base": "Node3D",
+"class": &"Volume",
+"language": &"GDScript",
+"path": "res://game/world/entity/svo_volume/volume.gd"
+}, {
+"base": "Node3D",
 "class": &"VolumeRoot",
 "language": &"GDScript",
 "path": "res://game/world/entity/svo_volume/root.gd"
@@ -57,6 +62,7 @@ _global_script_class_icons={
 "FreeCam": "",
 "ResTree": "",
 "TriangData": "",
+"Volume": "",
 "VolumeRoot": ""
 }
 
