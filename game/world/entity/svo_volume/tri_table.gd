@@ -259,3 +259,6 @@ var triangulation_table : PackedInt32Array = [
   [0, 3, 8],
   []
 ]
+
+func load_trit():
+	pass

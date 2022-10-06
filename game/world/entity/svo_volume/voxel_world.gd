@@ -3,6 +3,13 @@ extends Node3D
 
 @onready var triobj = TriangData.new()
 
+var settings = {
+	performance = {
+		transparency_threshold = 0.975,
+		mesh_lod_mul = 1
+	}
+}
+
 var materials : Array = [
 	
 ]
