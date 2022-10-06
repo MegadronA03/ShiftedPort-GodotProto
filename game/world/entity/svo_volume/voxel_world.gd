@@ -3,15 +3,15 @@ extends Node3D
 
 @onready var triobj = TriangData.new()
 
-var settings = {
+var settings : Dictionary = {
 	performance = {
 		transparency_threshold = 0.975,
 		mesh_lod_mul = 1
 	}
 }
 
-var materials : Array = [
-	
+var base_materials : Array = [
+	"void"
 ]
 
 # Called when the node enters the scene tree for the first time.
