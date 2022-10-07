@@ -2,6 +2,9 @@ class_name VoxelWorld
 extends Node3D
 
 @onready var triobj = TriangData.new()
+@onready var cached = {
+	shapes = [BoxShape3D.new(),SphereShape3D.new()]
+}
 
 var settings : Dictionary = {
 	performance = {
@@ -10,7 +13,7 @@ var settings : Dictionary = {
 	}
 }
 
-var base_materials : Array = [
+var base_materials = [
 	"void"
 ]
 
