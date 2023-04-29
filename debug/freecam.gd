@@ -25,7 +25,7 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	cam.position += (GlobalCustom.vec_basis_trensform(axis_dir, cam.basis) * speed * delta)
+	cam.position += cam.basis * Vector3(axis_dir) * speed * delta
 	pass
 	
 func _wresize():
