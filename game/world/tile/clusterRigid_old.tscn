@@ -1,0 +1,35 @@
+[gd_scene load_steps=4 format=3 uid="uid://21igg1ehghn"]
+
+[ext_resource type="Script" path="res://game/world/tile/cluster.gd" id="1_yrtbo"]
+[ext_resource type="ArrayMesh" uid="uid://bntu72i7rp34s" path="res://rbddhd.obj" id="2_dherc"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_ru7to"]
+flip_faces = true
+size = Vector3(1.5, 1.5, 1.5)
+
+[node name="root" type="RigidBody3D"]
+script = ExtResource("1_yrtbo")
+
+[node name="PostProcess" type="MeshInstance3D" parent="."]
+visible = false
+mesh = SubResource("BoxMesh_ru7to")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, -0.25, 0.25, -0.25)
+visible = false
+mesh = ExtResource("2_dherc")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0.25, 0.25, 0.25)
+visible = false
+mesh = ExtResource("2_dherc")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0.25, -0.25, -0.25)
+visible = false
+mesh = ExtResource("2_dherc")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, -0.25, -0.25, 0.25)
+visible = false
+mesh = ExtResource("2_dherc")

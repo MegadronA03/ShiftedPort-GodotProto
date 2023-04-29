@@ -1,12 +1,35 @@
+class_name GStart
 extends Control
 #@onready
 var test_scene = preload("res://game/scenes/origins_test.tscn")
+@onready var rootW = $"/root"
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	set_name("Iroot")
 	var t
 	#var c
+	#print_debug(DisplayServer.screen_get_dpi())
+	rootW.content_scale_factor = 96.0/DisplayServer.screen_get_dpi()
+	if OS.has_feature("mobile"): #if mobile (should be used for enabeling touch controls)
+		#https://docs.godotengine.org/en/latest/tutorials/inputs/inputevent.htmls
+		#https://docs.godotengine.org/en/latest/classes/class_inputeventscreentouch.html
+		#top left conner drag to open console
+		#$"/root".size = Vector2i(256,256)
+		
+		#TODO: add these as setting to change
+		rootW.scaling_3d_scale = 0.25
+		#rootW.content_scale_factor = 3.0
+		var l = Console.new()
+		add_child(l)
+	else:
+		pass
+		#rootW.content_scale_factor = 1.0
+		#rootW.content_scale_aspect = 1.0
+		#rootW.content_scale_mode = rootW.CONTENT_SCALE_MODE_DISABLED
+		#rootW.content_scale_mode = rootW.CONTENT_SCALE_MODE_CANVAS_ITEMS
+		#rootW.content_scale_size = Vector2(1280.0,720.0)
+	
 	t = test_scene.instantiate()
 	add_child(t)
 	#var w = WorldEnvironment.new()
@@ -38,7 +61,6 @@ func _ready():
 	#t = Camera3D.new()
 	#t.keep_aspect = Camera3D.KEEP_WIDTH
 	#c.add_child(t)
-
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):

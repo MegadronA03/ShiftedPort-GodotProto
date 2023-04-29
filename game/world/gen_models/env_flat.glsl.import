@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://da6dhndxcs1h4"
+path="res://.godot/imported/env_flat.glsl-f360f3f608bab985175462d734f1867e.res"
+
+[deps]
+
+source_file="res://game/world/gen_models/env_flat.glsl"
+dest_files=["res://.godot/imported/env_flat.glsl-f360f3f608bab985175462d734f1867e.res"]
+
+[params]
+

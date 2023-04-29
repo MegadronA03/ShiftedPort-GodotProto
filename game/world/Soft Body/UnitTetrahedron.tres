@@ -1,0 +1,5 @@
+[gd_resource type="ConvexPolygonShape3D" format=3 uid="uid://db1oue4c42ol"]
+
+[resource]
+resource_name = "UnitTetrahedronShape"
+points = PackedVector3Array(0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)

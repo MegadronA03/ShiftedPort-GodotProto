@@ -40,17 +40,6 @@ var commands = {
 "clr": [func(args):
 	content.clear()
 ,[]],
-"help": [func(args):
-	for i in commands:
-		if (commands[i][1] != []):
-			var argstr = []
-			for e in commands[i][1]:
-				argstr.append("<"+type_tostr[e]+">")
-			output_text(str(i," "," ".join(argstr)))
-		else:
-			output_text(str(i))
-		#output_text(str(i,argstr))
-,[]],
 "version": [func(args):
 	var export_config = ConfigFile.new()
 	export_config.load("res://export_presets.cfg")
@@ -74,7 +63,8 @@ var commands = {
 	var r = get_node("/root/Iroot")
 	var t = FreeCam.new()
 	r.add_child(t)
-,[]]
+,[]],
+"help" : []
 }
 
 func check_type(string, type):
@@ -161,6 +151,17 @@ func process_command(text):#TODO: integrate
 	output_text(cmd_info[0].call(words))
 
 func _init(node = null):
+	commands["help"] = [func(args):
+		for i in commands:
+			if (commands[i][1] != []):
+				var argstr = []
+				for e in commands[i][1]:
+					argstr.append("<"+type_tostr[e]+">")
+				output_text(str(i," "," ".join(argstr)))
+			else:
+				output_text(str(i))
+			#output_text(str(i,argstr))
+	,[]]
 	if (node != null):
 		inode = node
 

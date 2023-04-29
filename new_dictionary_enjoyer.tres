@@ -1,0 +1,80 @@
+[gd_resource type="Resource" script_class="AverageDictionaryEnjoyer" load_steps=8 format=3 uid="uid://1di6gtbcigwg"]
+
+[ext_resource type="Script" path="res://average_dictionary_enjoyer.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://b2bakf0rugby5" path="res://icon.png" id="2"]
+[ext_resource type="Environment" uid="uid://wgr2xia3g4cw" path="res://default_env.tres" id="3"]
+
+[sub_resource type="Resource" id="Resource_gql8f"]
+script = ExtResource("1")
+dict1 = {}
+dict2 = {
+"some_array": 0.0,
+"some_color": 0.25
+}
+dict3 = {}
+arr = null
+arr2 = null
+
+[sub_resource type="Resource" id="Resource_2rl7o"]
+script = ExtResource("1")
+dict1 = {}
+dict2 = {
+"cool_property": 9
+}
+dict3 = {
+"boring_property": Color(0.745098, 0.745098, 0.745098, 1)
+}
+arr = null
+arr2 = null
+res = SubResource("Resource_gql8f")
+
+[sub_resource type="Resource" id="Resource_h5ru4"]
+script = ExtResource("1")
+dict1 = {}
+dict2 = {
+"cool_property": 9
+}
+dict3 = {
+"boring_property": Color(0.745098, 0.745098, 0.745098, 1)
+}
+arr = null
+arr2 = null
+res = SubResource("Resource_2rl7o")
+
+[sub_resource type="Resource" id="Resource_jsmc6"]
+script = ExtResource("1")
+dict1 = {}
+dict2 = {
+"cool_property": 9
+}
+dict3 = {
+"boring_property": Color(0.745098, 0.745098, 0.745098, 1)
+}
+arr = []
+arr2 = PackedStringArray()
+res = SubResource("Resource_h5ru4")
+
+[resource]
+script = ExtResource("1")
+dict1 = {
+true: ["nested, dynamic!", 200.0],
+"key": Color(0.117647, 1, 0.52549, 1),
+Vector2(0.13, 0): null
+}
+dict2 = {
+"Even supports non-string keys!": Color(0.8, 0.0823529, 0.0823529, 1),
+"Some number.": 0.78,
+"Some vector...": Vector3(0.16, 0, 0),
+AABB(0, 0, 7.74, 0, 0, 0): {
+"Whole nested dict???": true
+},
+AABB(0.71, 0.47, 0.67, 1.34, 0.6, 16.5): ["nested array!", ExtResource("2"), 11.0]
+}
+dict3 = {
+"Enter value...": [0.0, Vector2(0, 0), Color(0, 0, 0, 1), "See? Any type.", ExtResource("3")]
+}
+arr = [{
+0: 0
+}]
+arr2 = PackedStringArray()
+res = SubResource("Resource_jsmc6")

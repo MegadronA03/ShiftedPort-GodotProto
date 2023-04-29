@@ -1,0 +1,26 @@
+[remap]
+
+importer="cubemap_texture"
+type="CompressedCubemap"
+uid="uid://6fpfiwkyct35"
+path.s3tc="res://.godot/imported/CubeMapNvidiaLayout.jpg-752b8cf7214beb0c8f65b9557732cc37.s3tc.ccube"
+metadata={
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
+}
+
+[deps]
+
+source_file="res://TestTextures/CubeMaps/CubeMapNvidiaLayout.jpg"
+dest_files=["res://.godot/imported/CubeMapNvidiaLayout.jpg-752b8cf7214beb0c8f65b9557732cc37.s3tc.ccube"]
+
+[params]
+
+compress/mode=2
+compress/high_quality=false
+compress/lossy_quality=0.53
+compress/hdr_compression=1
+compress/channel_pack=0
+mipmaps/generate=false
+mipmaps/limit=-1
+slices/arrangement=3

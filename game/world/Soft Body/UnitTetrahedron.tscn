@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://bh71otqyh6sdp"]
+
+[ext_resource type="Shape3D" uid="uid://db1oue4c42ol" path="res://game/world/Soft Body/UnitTetrahedron.tres" id="1_o55ee"]
+[ext_resource type="Script" path="res://game/world/Soft Body/United/SoftRigidSPart3D.gd" id="2_csrgl"]
+
+[node name="UnitTetrahedron" type="CollisionShape3D"]
+rotation_edit_mode = 2
+shape = ExtResource("1_o55ee")
+script = ExtResource("2_csrgl")

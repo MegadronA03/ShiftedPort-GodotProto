@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://n1ytcg3s5eee"
+path="res://.godot/imported/reference_gpu.glsl-211341fe1825932ec00f92aaeb3d35c4.res"
+
+[deps]
+
+source_file="res://game/world/reference_gpu.glsl"
+dest_files=["res://.godot/imported/reference_gpu.glsl-211341fe1825932ec00f92aaeb3d35c4.res"]
+
+[params]
+

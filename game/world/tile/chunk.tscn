@@ -1,0 +1,30 @@
+[gd_scene load_steps=5 format=3 uid="uid://dxgt7pwn0h0ew"]
+
+[ext_resource type="Script" path="res://game/world/tile/chunk.gd" id="1_ev85p"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_yc4rk"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_pao7y"]
+_surfaces = [{
+"aabb": AABB(0, 0, 0, 1, 1e-05, 1),
+"format": 4097,
+"index_count": 3,
+"index_data": PackedByteArray(0, 0, 1, 0, 2, 0),
+"primitive": 3,
+"vertex_count": 3,
+"vertex_data": PackedByteArray(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 63)
+}]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_660tv"]
+
+[node name="chunck" type="Node3D"]
+script = ExtResource("1_ev85p")
+
+[node name="visualBody" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_yc4rk")
+mesh = SubResource("ArrayMesh_pao7y")
+
+[node name="RigidBody3D" type="RigidBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D"]
+shape = SubResource("SphereShape3D_660tv")

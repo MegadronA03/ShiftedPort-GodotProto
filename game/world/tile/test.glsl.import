@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://cbec1i3fm5ohk"
+path="res://.godot/imported/test.glsl-cb101b9b7a3cf06b16bc88820819176e.res"
+
+[deps]
+
+source_file="res://game/world/tile/test.glsl"
+dest_files=["res://.godot/imported/test.glsl-cb101b9b7a3cf06b16bc88820819176e.res"]
+
+[params]
+

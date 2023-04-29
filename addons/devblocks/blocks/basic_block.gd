@@ -8,7 +8,7 @@ signal transform_changed
 const _base_texture_folder = "res://addons/devblocks/textures/"
 
 enum DEVBLOCK_COLOR_GROUP {DARK, GREEN, LIGHT, ORANGE, PURPLE, RED}
-const _devblock_color_to_foldername := [
+const _devblock_color_to_foldername : PackedStringArray = [
 	"dark",
 	"green",
 	"light",

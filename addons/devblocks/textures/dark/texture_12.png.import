@@ -4,23 +4,22 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://c6k3yca4kja1n"
 path.s3tc="res://.godot/imported/texture_12.png-32847cc6e79cf66a09cdc3fe67e1eb32.s3tc.ctex"
-path.etc2="res://.godot/imported/texture_12.png-32847cc6e79cf66a09cdc3fe67e1eb32.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc", "etc2"],
+"imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://addons/devblocks/textures/dark/texture_12.png"
-dest_files=["res://.godot/imported/texture_12.png-32847cc6e79cf66a09cdc3fe67e1eb32.s3tc.ctex", "res://.godot/imported/texture_12.png-32847cc6e79cf66a09cdc3fe67e1eb32.etc2.ctex"]
+dest_files=["res://.godot/imported/texture_12.png-32847cc6e79cf66a09cdc3fe67e1eb32.s3tc.ctex"]
 
 [params]
 
 compress/mode=2
+compress/high_quality=false
 compress/lossy_quality=0.7
 compress/hdr_compression=1
-compress/bptc_ldr=0
 compress/normal_map=0
 compress/channel_pack=0
 mipmaps/generate=true
