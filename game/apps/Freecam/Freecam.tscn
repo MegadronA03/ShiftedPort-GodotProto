@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://bc4dwafxxewwi"]
+
+[node name="Freecam" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+
+[node name="Label" type="Label" parent="SubViewportContainer/SubViewport"]
+offset_right = 40.0
+offset_bottom = 26.0
+text = "512x512
+0 fps
+0,0,0
+1,0,0"

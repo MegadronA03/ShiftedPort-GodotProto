@@ -8,7 +8,8 @@ const TetrahShape = preload("res://game/world/Soft Body/UnitTetrahedron.tscn")
 	"position" : PackedVector3Array(),
 	"velocity" : PackedVector3Array(),
 	"force" : PackedVector3Array(),
-	"mass" : PackedFloat32Array()
+	"mass" : PackedFloat32Array(),
+	"locked" : PackedInt32Array() # used to lock
 }
 
 #palette with cached springs properities,
@@ -35,7 +36,10 @@ func _process(delta):
 	pass
 
 func _physics_process(delta):
-	pass # shapeshifting call
+	pass # shape deforming 
+
+func _update_mesh():
+	pass # shape splitting, gluing
 
 func _integrate_forces(state):
 	#Euler integration

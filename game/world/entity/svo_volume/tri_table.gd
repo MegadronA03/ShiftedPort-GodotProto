@@ -1,7 +1,11 @@
 class_name TriangData
 extends Node
 
-var triangulation_table : PackedInt32Array = [
+var tetrahtrang_table : PackedByteArray = [
+	
+]
+
+var triangulation_table : PackedByteArray = [
   [],
   [0, 8, 3],
   [0, 1, 9],

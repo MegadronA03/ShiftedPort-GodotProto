@@ -170,11 +170,11 @@ func _ready():
 	if (!inode):
 		inode = get_tree().get_root()
 	title = "Console: " + inode.get_class() + " " + str(inode.name)
-	var mwnd = get_node("/root/Iroot")
+	#var mwnd = get_node("/root/Iroot")
 	#transparent_bg = true
 	#transparent = true
-	size = mwnd.size*.5
-	position = mwnd.size*.25
+	#print(size)
+	
 	close_requested.connect(_close)
 	
 	var t

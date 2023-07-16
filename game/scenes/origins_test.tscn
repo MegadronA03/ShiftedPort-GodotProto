@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://bdhm8y68acj7u"]
+[gd_scene load_steps=6 format=3 uid="uid://bdhm8y68acj7u"]
 
 [ext_resource type="PackedScene" uid="uid://dj26sacnhty4r" path="res://addons/devblocks/blocks/basic_block.tscn" id="1_hi0vw"]
 [ext_resource type="PackedScene" uid="uid://camvcri7e11vi" path="res://addons/devblocks/blocks/colored_block.tscn" id="2_kjslv"]
@@ -34,10 +34,6 @@ glow_strength = 0.5
 fog_light_color = Color(1, 1, 1, 1)
 fog_light_energy = 0.25
 fog_density = 0.025
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_874gm"]
-
-[sub_resource type="BoxMesh" id="BoxMesh_cn6fr"]
 
 [node name="origins_test" type="Node3D"]
 
@@ -103,27 +99,6 @@ block_style = 4
 [node name="Ground" parent="WorldEnvironment/TestMap/Hub" instance=ExtResource("1_hi0vw")]
 transform = Transform3D(8, 0, 0, 0, 1, 0, 0, 0, 15, 0, -1.25, 7.5)
 block_style = 1
-
-[node name="SpawnZone2" parent="WorldEnvironment/TestMap/Hub" instance=ExtResource("2_kjslv")]
-transform = Transform3D(0, 0, -1, 0, 1, -0.5, 1, 0, 0, 0.171351, 0.936055, 8.34614)
-rotation_edit_mode = 2
-block_color = Color(0.423529, 0.670588, 1, 1)
-block_style = 4
-
-[node name="SpawnZone3" parent="WorldEnvironment/TestMap/Hub/SpawnZone2" instance=ExtResource("2_kjslv")]
-transform = Transform3D(1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1)
-rotation_edit_mode = 2
-block_color = Color(0.423529, 0.670588, 1, 1)
-block_style = 4
-
-[node name="RigidBody3D" type="RigidBody3D" parent="WorldEnvironment/TestMap/Hub"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.178288, 2.25796, 8.28037)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="WorldEnvironment/TestMap/Hub/RigidBody3D"]
-shape = SubResource("BoxShape3D_874gm")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="WorldEnvironment/TestMap/Hub/RigidBody3D"]
-mesh = SubResource("BoxMesh_cn6fr")
 
 [node name="VoxelSandbox" type="Node3D" parent="WorldEnvironment/TestMap"]
 

@@ -1,0 +1,142 @@
+[gd_scene load_steps=10 format=3 uid="uid://bjnvlj0hqnpl4"]
+
+[ext_resource type="Texture2D" uid="uid://xw4em4tm6fkp" path="res://game/ui/i_minimize.svg" id="1_fothk"]
+[ext_resource type="Script" path="res://game/ui/windowex/WindowEX.gd" id="1_hdc6e"]
+[ext_resource type="Texture2D" uid="uid://cjy42m6a4nvfa" path="res://game/ui/i_connerdrag.svg" id="1_s8uhr"]
+[ext_resource type="Texture2D" uid="uid://cdf256e3oysx7" path="res://game/ui/i_expand.svg" id="2_6y0rh"]
+[ext_resource type="Texture2D" uid="uid://8sgnecui2sh4" path="res://game/ui/i_hbars.svg" id="2_43w33"]
+[ext_resource type="Texture2D" uid="uid://nwxy3ffhwswn" path="res://game/ui/i_close.svg" id="3_da4ji"]
+[ext_resource type="Texture2D" uid="uid://clhdp2nf37vhl" path="res://game/ui/i_vbars.svg" id="3_xl8po"]
+
+[sub_resource type="CanvasTexture" id="CanvasTexture_50isx"]
+diffuse_texture = ExtResource("1_s8uhr")
+
+[sub_resource type="LabelSettings" id="LabelSettings_6x7dh"]
+font_size = 24
+
+[node name="WindowEX_prefab" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_hdc6e")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GridContainer" type="GridContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+columns = 3
+
+[node name="TextureButton" type="TextureButton" parent="GridContainer"]
+layout_mode = 2
+texture_normal = SubResource("CanvasTexture_50isx")
+stretch_mode = 3
+
+[node name="TextureButton2" type="TextureButton" parent="GridContainer"]
+layout_mode = 2
+texture_normal = ExtResource("2_43w33")
+stretch_mode = 3
+
+[node name="TextureButton3" type="TextureButton" parent="GridContainer"]
+layout_mode = 2
+texture_normal = ExtResource("1_s8uhr")
+stretch_mode = 3
+flip_h = true
+
+[node name="TextureButton4" type="TextureButton" parent="GridContainer"]
+layout_mode = 2
+texture_normal = ExtResource("3_xl8po")
+stretch_mode = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="GridContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="GridContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="Label" type="Label" parent="GridContainer/VBoxContainer/HBoxContainer/MarginContainer"]
+layout_mode = 2
+text = "No Title"
+label_settings = SubResource("LabelSettings_6x7dh")
+
+[node name="MarginContainer4" type="MarginContainer" parent="GridContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Minimize" type="TextureButton" parent="GridContainer/VBoxContainer/HBoxContainer/MarginContainer4"]
+layout_mode = 2
+texture_normal = ExtResource("1_fothk")
+
+[node name="MarginContainer3" type="MarginContainer" parent="GridContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Expand" type="TextureButton" parent="GridContainer/VBoxContainer/HBoxContainer/MarginContainer3"]
+layout_mode = 2
+texture_normal = ExtResource("2_6y0rh")
+
+[node name="MarginContainer2" type="MarginContainer" parent="GridContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Close" type="TextureButton" parent="GridContainer/VBoxContainer/HBoxContainer/MarginContainer2"]
+layout_mode = 2
+texture_normal = ExtResource("3_da4ji")
+
+[node name="MarginContainer" type="MarginContainer" parent="GridContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="GridContainer/VBoxContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="SubViewport" type="SubViewport" parent="GridContainer/VBoxContainer/MarginContainer/SubViewportContainer"]
+handle_input_locally = false
+size = Vector2i(256, 256)
+render_target_update_mode = 4
+
+[node name="TextureButton5" type="TextureButton" parent="GridContainer"]
+layout_mode = 2
+texture_normal = ExtResource("3_xl8po")
+stretch_mode = 3
+
+[node name="TextureButton6" type="TextureButton" parent="GridContainer"]
+layout_mode = 2
+texture_normal = ExtResource("1_s8uhr")
+stretch_mode = 3
+flip_v = true
+
+[node name="TextureButton7" type="TextureButton" parent="GridContainer"]
+layout_mode = 2
+texture_normal = ExtResource("2_43w33")
+stretch_mode = 3
+
+[node name="TextureButton8" type="TextureButton" parent="GridContainer"]
+layout_mode = 2
+texture_normal = ExtResource("1_s8uhr")
+stretch_mode = 3
+flip_h = true
+flip_v = true

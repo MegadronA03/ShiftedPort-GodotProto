@@ -70,4 +70,6 @@ func _input(event):
 	#if event is InputEventKey and event.is_pressed():
 	if event.is_action_pressed("toggle_console"): #`
 		var ctrlwnd = Console.new()
+		ctrlwnd.size = size*.5
+		ctrlwnd.position = size*.25
 		add_child(ctrlwnd)
