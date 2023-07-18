@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://7ipob37u65si"]
+
+[ext_resource type="Script" path="res://game/world/Soft Body/United/SoftRigidBody3D.gd" id="1_owjdq"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_yuads"]
+
+[node name="RigidBody3D" type="RigidBody3D"]
+script = ExtResource("1_owjdq")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("ArrayMesh_yuads")

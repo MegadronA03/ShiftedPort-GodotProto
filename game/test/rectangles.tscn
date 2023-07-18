@@ -1,0 +1,14 @@
+[gd_scene load_steps=4 format=3 uid="uid://ebfycrmk2ump"]
+
+[ext_resource type="Script" path="res://game/test/rects.gd" id="1_p7e6m"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_7lb51"]
+
+[sub_resource type="MultiMesh" id="MultiMesh_55jnu"]
+mesh = SubResource("QuadMesh_7lb51")
+
+[node name="rectangles" type="Node2D"]
+
+[node name="MultiMeshInstance2D" type="MultiMeshInstance2D" parent="."]
+multimesh = SubResource("MultiMesh_55jnu")
+script = ExtResource("1_p7e6m")
