@@ -5,6 +5,7 @@ const TetrahShape = preload("res://game/world/Soft Body/UnitTetrahedron.tscn")
 @onready var meshinst := $MeshInstance3D
 @onready var tel := []
 @onready var cols := []
+var volume := 0.0
 
 @export var mesh_shell : ArrayMesh #visual representation
 @export var point := {
@@ -55,9 +56,9 @@ func _ready():
 	#self.mass = sum of FEM masses
 	pass
 
-func get_volume():
+func update_volume():
 	var volsum = 0.0
-	#if len(cols) < 64:
+	if true:#len(cols) < 64:
 		var workers = []
 		var mutex = Mutex.new()
 		var vol_call = func(c):
@@ -69,10 +70,14 @@ func get_volume():
 			workers[i].start(vol_call.bind(cols[i]))
 		for i in workers:
 			i.wait_to_finish()
-	#else:
-	#	for i in cols: # TODO: parallel it on GPU
-	#		volsum += i.get_volume()
-	return volsum
+	else:
+		for i in cols: # TODO: parallel it on GPU
+			volsum += i.get_volume()
+	volume = volsum
+	#return volsum
+	
+func get_volume():
+	return volume
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -81,8 +86,8 @@ func _process(delta):
 func _physics_process(delta):
 	pass # shape deforming 
 
-func _update_mesh():
-	
+func update_mesh():
+	update_volume()
 	pass # shape splitting, gluing
 
 func _integrate_forces(state):
