@@ -4,7 +4,7 @@ extends RigidBody3D
 const TetrahShape = preload("res://game/world/Soft Body/UnitTetrahedron.tscn")
 @onready var meshinst := $MeshInstance3D
 @onready var tel := []
-
+@onready var cols := []
 
 @export var mesh_shell : ArrayMesh #visual representation
 @export var point := {
@@ -42,20 +42,37 @@ func _init(telm : Array):
 	for i in telm:
 		pass
 		
-	surface_array[Mesh.ARRAY_VERTEX] = verts
-	surface_array[Mesh.ARRAY_TEX_UV] = uvs
-	surface_array[Mesh.ARRAY_NORMAL] = normals
-	surface_array[Mesh.ARRAY_INDEX] = indices
-
-	# Create mesh surface from mesh array.
-	# No blendshapes, lods, or compression used.
-	meshinst.mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, surface_array)
+	#surface_array[Mesh.ARRAY_VERTEX] = verts
+	#surface_array[Mesh.ARRAY_TEX_UV] = uvs
+	#surface_array[Mesh.ARRAY_NORMAL] = normals
+	#surface_array[Mesh.ARRAY_INDEX] = indices
+	
+	#meshinst.mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, surface_array)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	custom_integrator = false
 	#self.mass = sum of FEM masses
 	pass
+
+func get_volume():
+	var volsum = 0.0
+	#if len(cols) < 64:
+		var workers = []
+		var mutex = Mutex.new()
+		var vol_call = func(c):
+			mutex.lock()
+			volsum += c.get_volume()
+			mutex.unlock()
+		for i in range(len(workers)):
+			workers[i] = Thread.new()
+			workers[i].start(vol_call.bind(cols[i]))
+		for i in workers:
+			i.wait_to_finish()
+	#else:
+	#	for i in cols: # TODO: parallel it on GPU
+	#		volsum += i.get_volume()
+	return volsum
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
