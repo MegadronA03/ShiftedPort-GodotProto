@@ -1,6 +1,7 @@
-[	
-	[0,0,[1,0,0],[0,1,0],[0,0,1]], "origin"
-	[1,0,[0,1],[-1,0,0]], "new from face"
-	[1,0,[1,3],[0,0,-1]], "new from face"
-	[2,0,[2,1],[0,1]] "new from face glue to vertex"
+[
+	[0,[1,0,0],[0,1,0],[0,0,1]], "new from new verticies (if from the begining, require only 3 verticies, 0th will be [0,0,0])"
+	[0,[0,1],[-1,0,0]], "new from face"
+	[0,[1,3],[0,0,-1]], "new from face"
+	[0,[2,1],[0,1]] "new from face glue to vertex"
+	[0,[4,4,4],[8,4,4],[4,8,4],[4,8,4]] "new from new verticies and indicies (depends on arr sizes)"
 ]

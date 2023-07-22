@@ -14,8 +14,10 @@ func get_volume():
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	if get_parent() is VolumetricSoftBody3D:
+		print_debug("VolumetricSoftBody3D: part were created outside mesh Node")
+	#	queue_free()
 	#shape = unit_ttrhdrn
-	pass
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
