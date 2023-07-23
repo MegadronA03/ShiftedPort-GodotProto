@@ -39,18 +39,45 @@ var springs := {
 
 @onready var parts : Array # shape shifting convex collision shapes
 
-func add_tetrahedra(material_index,verts,face=null):
+func find_face(a):
+	var score := 0
+	var place := 0
+	if a[0] == a[1]:
+		score += 1
+		place = a[0]
+	elif a[2] == a[3]:
+		score += 1
+		place = a[2]
+	if a[1] == a[2]:
+		score += 1
+	if a[0] == a[3]:
+		score += 1
+	if score == 3:
+		push_error("")
+	elif score == 2:
+		return place
+	return null
+	
+
+func add_tetrahedra(material_index,verts,face=-1):
 	var tetind := PackedInt32Array([0,0,0,0])
-	var face_detect := PackedInt32Array([0,0,0,0])
+	var face_detect : PackedInt32Array
+	var face_score : int
+	if face<0:
+		face_detect = PackedInt32Array([0,0,0,0])
+		face_score = 3
 	for i in 4:
 		if len(verts[i]) == 2: #if its index
 			var tet = verts[i][0]
-			face_detect[i] = tet
+			if face<0:
+				face_detect[i] = tet
 			var tetm = tet << 2 #*4
 			var vid = verts[i][1]
 			tetind[i] = tetrahedrons.indicies[tetm+vid]
 			
 		else: #if its vertex
+			if face<0:
+				pass
 			verticies.position.append(Vector3(verts[i]))
 			tetind[i] = len(verticies.position)
 	tetrahedrons.indicies.append(tetind)
