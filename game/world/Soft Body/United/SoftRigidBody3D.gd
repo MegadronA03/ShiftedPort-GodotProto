@@ -3,12 +3,17 @@ extends RigidBody3D
 
 const TetrahShape = preload("res://game/world/Soft Body/UnitTetrahedron.tscn")
 @onready var meshinst := $MeshInstance3D
-@onready var vtm := [] #data used to construnt volumetric tetrahedral mesh 
-@onready var itr := PackedVector3Array() #mesh indicies
-@onready var beh := [] #behaivour
-@onready var mat := [] #materials
-@onready var col := [] #collisions (they also store neighbours and tetrahedra, material indicies)
+var vtm := [] #data used to construnt volumetric tetrahedral mesh 
+var triangle_indicies := PackedVector3Array() #mesh indicies
+var tetrahedrons := {
+	"indicies" : PackedInt32Array(),
+	"neighbours" : [],
+	"behaivours" : []
+}
+@onready var materials := [] #materials_pallette
+@onready var collisions := [] #collisions (they also store neighbours and tetrahedra, material indicies)
 var volume := 0.0
+const tetrahedron_faces := [[1,3,2],[2,3,0],[3,1,0],[0,2,1]]
 
 @export var mesh_shell : ArrayMesh #visual representation
 @export var verticies := {
@@ -34,20 +39,24 @@ var springs := {
 
 @onready var parts : Array # shape shifting convex collision shapes
 
-func add_tetrahedra(verts,material_index):
-	var ind := PackedInt32Array([0,0,0,0])
+func add_tetrahedra(material_index,verts,face=null):
+	var tetind := PackedInt32Array([0,0,0,0])
+	var face_detect := PackedInt32Array([0,0,0,0])
 	for i in 4:
-		if len(verts[i]) == 2:
-			var t = verts[i]
-			while 1:
-				pass
+		if len(verts[i]) == 2: #if its index
+			var tet = verts[i][0]
+			face_detect[i] = tet
+			var tetm = tet << 2 #*4
+			var vid = verts[i][1]
+			tetind[i] = tetrahedrons.indicies[tetm+vid]
 			
-		else:
+		else: #if its vertex
 			verticies.position.append(Vector3(verts[i]))
-			ind[i] = len(verticies.position)
+			tetind[i] = len(verticies.position)
+	tetrahedrons.indicies.append(tetind)
 	var o = TetrahShape.instantiate()
 	add_child(o)
-	col.append(o)
+	collisions.append(o)
 
 func _init(vtmn : Array, matn : Array):
 	if (vtmn == null) || (vtmn == []):
@@ -56,22 +65,23 @@ func _init(vtmn : Array, matn : Array):
 		return
 	if (matn == null) || (matn == []):
 		push_warning("SoftRigidBody3D: no materials provided!")
-		#
-		#col = [o]
 		#telm = [[o,[null,null,null,null]]]
 	vtm = vtmn.duplicate()
 	
 	for i in vtmn:
 		match len(i):
 			3:#from face
+				var tiof : int = i[1][1]
+				for ti in range(1,4):
+					var tind := (ti+tiof) & 3 # & 3 same as modulo 4
 				if len(i[2]) == 3:
 					pass
 					#add_tetrahedra([,i[2]],i[0])
 					#verticies.position.append(Vector3(i[4]))
 			4:#origin
-				add_tetrahedra([[0,0,0],i[1],i[2],i[3]],i[0])
+				add_tetrahedra(i[0],[[0,0,0],i[1],i[2],i[3]])
 			5:#new from verts
-				add_tetrahedra([i[1],i[2],i[3],i[4]],i[0])
+				add_tetrahedra(i[0],[i[1],i[2],i[3],i[4]])
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -90,11 +100,11 @@ func update_volume():
 			mutex.unlock()
 		for i in range(len(workers)):
 			workers[i] = Thread.new()
-			workers[i].start(vol_call.bind(col[i]))
+			workers[i].start(vol_call.bind(collisions[i]))
 		for i in workers:
 			i.wait_to_finish()
 	else:
-		for i in col: # TODO: parallel it on GPU
+		for i in collisions: # TODO: parallel it on GPU
 			volsum += i.get_volume()
 	volume = volsum
 	#return volsum
