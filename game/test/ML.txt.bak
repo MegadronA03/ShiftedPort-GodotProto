@@ -1,0 +1,17 @@
+I: Started mind logging
+I: Main target:
+	finish "ShiftedPort"
+I: Evaluated sub target:
+	Finish tetrahdron mesh class
+I: Begin task:
+	finish json mesh loading
+I: TASK:
+	found that most efficint way will be implementing
+	supplimentary array with addictional data on version of
+	the format. is it will use multithreaded building.
+	supplimentary array for faster evaluating unique tetrahedrons.
+	implement surface materials as supplimentary instructions to the
+	mesh instructions [meshinstr_array,mat_array]
+	if tet doesnt find its material it will pick it from its parent
+	or lest placed tet. if both conditions didnt occured, assign material 0.
+	[[version_int],[tetinstr_array]]

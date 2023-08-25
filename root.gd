@@ -8,6 +8,7 @@ var test_scene = preload("res://game/scenes/origins_test.tscn")
 func _ready():
 	set_name.call_deferred("Iroot")
 	var t
+	
 	#var c
 	#print_debug(DisplayServer.screen_get_dpi())
 	rootW.content_scale_factor = 96.0/DisplayServer.screen_get_dpi()

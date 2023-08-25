@@ -65,7 +65,7 @@ func add_tetrahedra(material_index,verts,face=-1):
 	var face_score : int
 	if face<0:
 		face_detect = PackedInt32Array([0,0,0,0])
-		face_score = 3
+		face_score = 2
 	for i in 4:
 		if len(verts[i]) == 2: #if its index
 			var tet = verts[i][0]
