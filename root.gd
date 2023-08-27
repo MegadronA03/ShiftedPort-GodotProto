@@ -9,6 +9,7 @@ func _ready():
 	set_name.call_deferred("Iroot")
 	var t
 	
+	#print(al[0])
 	#var c
 	#print_debug(DisplayServer.screen_get_dpi())
 	rootW.content_scale_factor = 96.0/DisplayServer.screen_get_dpi()

@@ -6,27 +6,51 @@ var visible_mesh : ArrayMesh # Array mesh with computed visible surfaces
 @export var materials : Array = []
 @export var tet_instr : Array = [] # store data on how to constuct mesh form tets
 var tetmesh_verts : PackedVector3Array # verts of tetrahedrons (do not use in visible_mesh)
-var tet_inds : PackedInt32Array # used for storing tetrahedrons indicies
-var tet_neigh : Array = [] # used generate visible faces
-var tet_mats : PackedInt32Array = []
+#var tetmesh_cache : PackedByteArray # cache for faster tetrahedron manipulation
+var tetmesh_
+var tetrahedrons := ArrayMapped.new(Array(range(64)))
 var unpacked := false
 var volume : float
 const tet_faces := [[1,3,2],[2,3,0],[3,1,0],[0,2,1]]
 
-# return 4 verts of tetrahedron
-func get_tet_verts(tet_id : int) -> PackedVector3Array:
-	return PackedVector3Array([
-		tetmesh_verts[tet_inds[tet_id<<2]],
-		tetmesh_verts[tet_inds[tet_id<<2+1]],
-		tetmesh_verts[tet_inds[tet_id<<2+2]],
-		tetmesh_verts[tet_inds[tet_id<<2+3]]])
+class VolTetUnit:
+	var indicies : PackedInt32Array = [-1,-1,-1,-1]
+	var neighbours : Array = [null,null,null,null]
+	var material_id : int
+	const tet_faces := [[1,3,2],[2,3,0],[3,1,0],[0,2,1]]
+	# return 3 indicies of tetrahedron that forms its face
+	func get_face(excuded_vert : int) -> PackedInt32Array:
+		return PackedInt32Array([
+			indicies[tet_faces[excuded_vert][0]],
+			indicies[tet_faces[excuded_vert][1]],
+			indicies[tet_faces[excuded_vert][2]]])
+	func _init(indicies):
+		
+		pass
+	func plane_cut(p:Plane):
+		pass
 
-# return 3 indicies of tetrahedron that forms its face
-func get_tet_face_ind(tet_id : int,excuded_vert : int) -> PackedInt32Array:
-	return PackedInt32Array([
-		tetmesh_verts[tet_inds[tet_id<<2+tet_faces[excuded_vert][0]]],
-		tetmesh_verts[tet_inds[tet_id<<2+tet_faces[excuded_vert][1]]],
-		tetmesh_verts[tet_inds[tet_id<<2+tet_faces[excuded_vert][2]]]])
+class VolTetVert:
+	var v : Vector3 # vertex
+	var ts := ArrayMapped.new(PackedInt32Array([])) # tetrahedrons with that vert
+
+# free up the space using defragmentation
+# might not be used if each vertex gonna have references to tetrahedrons
+func cleanup_tetverts():
+	var ta := tetrahedrons.get_data_array()
+	var tmv := PackedVector3Array()
+	tmv.resize(tetmesh_verts.size())
+	for t in ta:
+		pass
+	pass
+
+# return 4 verts of tetrahedron
+func get_tet_verts(tet : VolTetUnit) -> PackedVector3Array:
+	return PackedVector3Array([
+		tetmesh_verts[tet.indicies[0]],
+		tetmesh_verts[tet.indicies[1]],
+		tetmesh_verts[tet.indicies[2]],
+		tetmesh_verts[tet.indicies[3]]])
 
 # used with data from get_tet_verts() and returns verticies of tet face
 func get_tet_face(tet_v : PackedVector3Array, excluded_vert : int) -> PackedVector3Array:
@@ -35,20 +59,28 @@ func get_tet_face(tet_v : PackedVector3Array, excluded_vert : int) -> PackedVect
 		tet_v[tet_faces[excluded_vert][1]],
 		tet_v[tet_faces[excluded_vert][2]]])
 
-func get_tet_material(tet_id:int) -> int:
-	return tet_mats[tet_id]
+func get_tet_material(tet:VolTetUnit):
+	return materials[tet.material_id]
 
 func add_free(verts : Array, mat : int) -> void:
-	pass
+	for i in 4:
+		match len(verts[i]):
+			2:
+				pass
+			3:
+				pass
 
 # add first tet to the tet array
 func add_origin(verts3 : PackedVector3Array, mat ) -> void:
+	
 	pass
 
-func add_from_face(tet_id, face_id, vert, mat = null) -> void:
+func add_from_face(tet_id, face_id, vert, mat) -> void:
+	
 	pass
 
 func remove_tet(tet_id:int):
+	tetrahedrons.remove_at(tet_id)
 	pass
 
 func place_tet(instruction : Array, mat : int = 0, new_mat : bool = false) -> void:
@@ -57,7 +89,7 @@ func place_tet(instruction : Array, mat : int = 0, new_mat : bool = false) -> vo
 			var sm = null
 			if new_mat:
 				sm = mat
-			add_from_face(instruction[0][0],instruction[0][1],instruction[1],mat)
+			add_from_face(instruction[0][0],instruction[0][1],instruction[1],sm)
 		3: # origin
 			add_origin(instruction,mat)
 		4: # full tetrahedron
@@ -81,12 +113,8 @@ func load_tmi(tmi : Array):
 					place_tet(mt[0],matb,true)
 				else:
 					place_tet(mt[0],matb)
-#				if mt.has(1):
-#					matb = mt[1]
-#				else:
-#					if len(mt[0] == 2):
-#						matb = get_tet_material(mt[0])
-				
+					if len(mt[0] == 2): # hacky fix, may be changed
+						matb = tetrahedrons[mt[0][0][0]].material_id
 		_:
 			print_stack()
 			push_error("load_tmi: unknown version of imported mesh: "+str(ver))
@@ -142,3 +170,4 @@ func merge(tetm0 : VolTetMesh, tetm1 : VolTetMesh) -> void: # merge 2 meshes
 
 func update_volume():
 	pass
+
