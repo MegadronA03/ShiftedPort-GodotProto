@@ -7,7 +7,7 @@ var visible_mesh : ArrayMesh # Array mesh with computed visible surfaces
 @export var tet_instr : Array = [] # store data on how to constuct mesh form tets
 var tetmesh_verts : PackedVector3Array # verts of tetrahedrons (do not use in visible_mesh)
 #var tetmesh_cache : PackedByteArray # cache for faster tetrahedron manipulation
-var tetmesh : VolTetVert
+var tetmesh := ArrayMapped.new(Array(range(256)))
 var tetrahedrons := ArrayMapped.new(Array(range(64)))
 var unpacked := false
 var volume : float
@@ -25,15 +25,21 @@ class VolTetUnit:
 			indicies[tet_faces[excuded_vert][0]],
 			indicies[tet_faces[excuded_vert][1]],
 			indicies[tet_faces[excuded_vert][2]]])
-	func _init(indicies):
+	func _init(indicies=null):
 		
 		pass
 	func plane_cut(p:Plane):
 		pass
 
 class VolTetVert:
-	var v : Vector3 # vertex
+	var vert : Vector3 # vertex
 	var ts := ArrayMapped.new(PackedInt32Array([])) # tetrahedrons with that vert
+	func _init(v = null):
+		match typeof(v):
+			TYPE_VECTOR3,TYPE_VECTOR3I:
+				vert = v as Vector3
+			12,13,20,28,29,30,31,32,33: # arrays and other types
+				vert = Vector3(v[0],v[1],v[2])
 
 # free up the space using defragmentation
 # might not be used if each vertex gonna have references to tetrahedrons
@@ -63,16 +69,24 @@ func get_tet_face(tet_v : PackedVector3Array, excluded_vert : int) -> PackedVect
 func get_tet_material(tet:VolTetUnit):
 	return materials[tet.material_id]
 
-func add_free(verts : Array, mat : int, neighbours : PackedInt32Array = null) -> void:
+func add_free(verts : Array, mat : int, neighs : PackedInt32Array = []) -> void:
+	var tet := VolTetUnit.new()
+	var tet_id := tetrahedrons.alloc_val(tet)
+	tet.self_id = tet_id
 	for i in 4:
+		var wv : VolTetVert
 		match len(verts[i]):
 			2:
-				pass
+				tet.indicies[i] = tetrahedrons.databuff[verts[i][0]].indicies[verts[i][1]]
 			3:
-				pass
+				var ind := tetmesh.alloc_val(VolTetVert.new(verts[i]))
+				tet.indicies[i] = ind
+		wv = tetmesh.databuff[tet.indicies[i]]
+		wv.ts.alloc_val(tet_id)
+	# TODO : face linking (tet.neighbours) probably gonna do string magic
 
 # add first tet to the tet array
-func add_origin(verts3 : PackedVector3Array, mat ) -> void:
+func add_origin(verts3 : PackedVector3Array, mat : int ) -> void:
 	
 	pass
 

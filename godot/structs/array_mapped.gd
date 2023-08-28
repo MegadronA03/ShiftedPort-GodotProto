@@ -39,7 +39,7 @@ func remove_at(index:int) -> void:
 		I = index
 		_remove_at_b0(I)
 
-func new_element(value):
+func alloc() -> int:
 	var outp : int
 	var lel := mempbuff[size]
 	if lel == 0:
@@ -50,6 +50,12 @@ func new_element(value):
 	mempbuff[size] = size
 	size += 1
 	return outp
+
+# will return error if no databuff in place
+func alloc_val(value) -> int:
+	var a := alloc()
+	databuff[a] = value
+	return a
 
 #func push_array(arr):
 #	pass
