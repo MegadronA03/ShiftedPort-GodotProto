@@ -7,7 +7,7 @@ var visible_mesh : ArrayMesh # Array mesh with computed visible surfaces
 @export var tet_instr : Array = [] # store data on how to constuct mesh form tets
 var tetmesh_verts : PackedVector3Array # verts of tetrahedrons (do not use in visible_mesh)
 #var tetmesh_cache : PackedByteArray # cache for faster tetrahedron manipulation
-var tetmesh_
+var tetmesh : VolTetVert
 var tetrahedrons := ArrayMapped.new(Array(range(64)))
 var unpacked := false
 var volume : float
@@ -15,8 +15,9 @@ const tet_faces := [[1,3,2],[2,3,0],[3,1,0],[0,2,1]]
 
 class VolTetUnit:
 	var indicies : PackedInt32Array = [-1,-1,-1,-1]
-	var neighbours : Array = [null,null,null,null]
+	var neighbours : PackedInt32Array = [-1,-1,-1,-1]
 	var material_id : int
+	var self_id : int
 	const tet_faces := [[1,3,2],[2,3,0],[3,1,0],[0,2,1]]
 	# return 3 indicies of tetrahedron that forms its face
 	func get_face(excuded_vert : int) -> PackedInt32Array:
@@ -62,7 +63,7 @@ func get_tet_face(tet_v : PackedVector3Array, excluded_vert : int) -> PackedVect
 func get_tet_material(tet:VolTetUnit):
 	return materials[tet.material_id]
 
-func add_free(verts : Array, mat : int) -> void:
+func add_free(verts : Array, mat : int, neighbours : PackedInt32Array = null) -> void:
 	for i in 4:
 		match len(verts[i]):
 			2:
