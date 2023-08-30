@@ -78,7 +78,7 @@ func get_tet_ev():
 func link_tet_neighbours(tet0:VolTetUnit,ev0:int,tet1:VolTetUnit,ev1:int=-1) -> void:
 	pass
 
-func find_side_neigh(tet : VolTetUnit, vtas : Array):
+func find_side_neigh(tet : VolTetUnit, vtas : Array, vis : PackedInt32Array):
 	# do a little sorting for order checking without useless reads
 	var voc : PackedByteArray = [0,1,2]
 	if vtas[0].size > vtas[1].size:
@@ -88,13 +88,16 @@ func find_side_neigh(tet : VolTetUnit, vtas : Array):
 	if vtas[voc[0]].size > vtas[voc[1]].size:
 		voc = [voc[1],voc[0],voc[2]]
 	
-	# TODO : method with bsearch()
 	for ti0 in vtas[voc[0]].get_data_array():
-		for ti1 in vtas[voc[1]].get_data_array():
-			if ti0 == ti1:
-				for ti2 in vtas[voc[2]].get_data_array():
-					if ti0 == ti2:
-						return # return neighbour ID and his side
+		# TODO: pick ti0 tetrahedra and start checking its sides
+		tetrahedrons.databuff[ti0]
+		# comparing 3 indicies across list is inefficient
+		#for ti1 in vtas[voc[1]].get_data_array():
+		#	if ti0 == ti1:
+		#		for ti2 in vtas[voc[2]].get_data_array():
+		#			if ti0 == ti2:
+		#				
+		#				return # return neighbour ID and his side
 
 func update_side_neigh(tet : VolTetUnit, vtas : Array, ev : int, n = null) -> void:
 	if n == null:
@@ -109,33 +112,47 @@ func add_free(verts : Array, mat : int, neighs : PackedInt32Array = [-1,-1,-1,-1
 	var tet_id := tetrahedrons.alloc_val(tet)
 	tet.self_id = tet_id
 	var vtas : Array = [null,null,null,null] # holds vector tetrahedron arrays
-	var iv := 0
+	#var iv :int = 0 # indexed vectors
+	var lev :int = -1 # last excluded vector (-1 NOTHING, -2 MORE_THAN_2)
 	for i in 4:
 		match len(verts[i]):
 			2:
 				tet.indicies[i] = tetrahedrons.databuff[verts[i][0]].indicies[verts[i][1]]
-				iv |= 1<<i
+				#iv |= 1<<i
 			3:
 				var ind := tetmesh.alloc_val(VolTetVert.new(verts[i]))
 				tet.indicies[i] = ind
+				match lev:
+					-1:
+						lev = i # probably will need real vert id
+					-2:
+						pass
+					_:
+						lev = -2
 		vtas[i] = tetmesh.databuff[tet.indicies[i]].tets # adding objects to a list for later use
 	# TODO : face linking (tet.neighbours)
 	# for reference see get_tet_face(vtas,ev)
 	# were replaces with direct array construction to skip function calls
 	# needs benchmarking, if const tet_faces changed, use lines with get_tet_face
-	match (iv):
-		0b0111: # 7 	[1,3,2]
-			update_side_neigh(tet,vtas,0,neighs[0])
-		0b1011: # 11	[2,3,0]
-			update_side_neigh(tet,vtas,1,neighs[1])
-		0b1101: # 13	[3,1,0]
-			update_side_neigh(tet,vtas,2,neighs[2])
-		0b1110: # 14	[0,2,1]
-			update_side_neigh(tet,vtas,3,neighs[3])
-		0b1111: # 15
+	match lev:
+		-1:
 			update_tet_neighs(tet,vtas,neighs)
+		-2:
+			pass
+		_:
+			update_side_neigh(tet,vtas,lev,neighs[lev])
+	#match (iv): # invert this
+	#	7:	# 0111 	[1,3,2]
+	#		update_side_neigh(tet,vtas,0,neighs[0])
+	#	11:	# 1011	[2,3,0]
+	#		update_side_neigh(tet,vtas,1,neighs[1])
+	#	13:	# 1101	[3,1,0]
+	#		update_side_neigh(tet,vtas,2,neighs[2])
+	#	14:	# 1110	[0,2,1]
+	#		update_side_neigh(tet,vtas,3,neighs[3])
+	#	15:	# 1111
+	#		update_tet_neighs(tet,vtas,neighs)
 	for i in 4: # add tet to verts after neigh check to skip self checks
-		# TODO: implement sorting for bsearch() fast neighbour adding
 		vtas[i].alloc_val(tet_id)
 
 # add first tet to the tet array
