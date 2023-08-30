@@ -44,6 +44,7 @@ class VolTetVert:
 
 # free up the space using defragmentation
 # might not be used if each vertex gonna have references to tetrahedrons
+# do not use with ArrayMapped
 func cleanup_tetverts():
 	var ta := tetrahedrons.get_data_array()
 	var tmv := PackedVector3Array()
@@ -78,7 +79,10 @@ func get_tet_ev():
 func link_tet_neighbours(tet0:VolTetUnit,ev0:int,tet1:VolTetUnit,ev1:int=-1) -> void:
 	pass
 
-func find_side_neigh(tet : VolTetUnit, vtas : Array, vis : PackedInt32Array):
+func link_tet_neighbours_2w(tet0:VolTetUnit,ev0:int,tet1:VolTetUnit,ev1:int=-1) -> void:
+	pass
+
+func find_side_neigh(tet : VolTetUnit, vtas : Array, svi : Vector3i):
 	# do a little sorting for order checking without useless reads
 	var voc : PackedByteArray = [0,1,2]
 	if vtas[0].size > vtas[1].size:
@@ -90,7 +94,13 @@ func find_side_neigh(tet : VolTetUnit, vtas : Array, vis : PackedInt32Array):
 	
 	for ti0 in vtas[voc[0]].get_data_array():
 		# TODO: pick ti0 tetrahedra and start checking its sides
-		tetrahedrons.databuff[ti0]
+		var scbuff := ArrayMapped.new(PackedInt32Array(tetrahedrons.databuff[ti0].indexes))
+		for vi in svi:
+			for si in scbuff.get_data_array():
+				if vi == si:
+					# TODO: finish it
+					scbuff.remove_at(si)
+					break
 		# comparing 3 indicies across list is inefficient
 		#for ti1 in vtas[voc[1]].get_data_array():
 		#	if ti0 == ti1:
@@ -99,9 +109,9 @@ func find_side_neigh(tet : VolTetUnit, vtas : Array, vis : PackedInt32Array):
 		#				
 		#				return # return neighbour ID and his side
 
-func update_side_neigh(tet : VolTetUnit, vtas : Array, ev : int, n = null) -> void:
+func update_side_neigh(tet : VolTetUnit, vtas : Array, ev : int, svi : Vector3i, n = null) -> void:
 	if n == null:
-		n = find_side_neigh(tet,get_tet_face_elements(vtas,ev))
+		n = find_side_neigh(tet,get_tet_face_elements(vtas,ev),svi)
 	link_tet_neighbours(tet,ev,n[0],n[1]) # TODO: think about on what side linking gonna happen
 
 func update_tet_neighs(tet : VolTetUnit, vtas : Array, neighs : Array = [null,null,null,null]) -> void:
@@ -113,34 +123,41 @@ func add_free(verts : Array, mat : int, neighs : PackedInt32Array = [-1,-1,-1,-1
 	tet.self_id = tet_id
 	var vtas : Array = [null,null,null,null] # holds vector tetrahedron arrays
 	#var iv :int = 0 # indexed vectors
-	var lev :int = -1 # last excluded vector (-1 NOTHING, -2 MORE_THAN_2)
+	# new vertex code (-1 NOTHING, -2 MORE_THAN_2)
+	var nvc : int = -1 # helps to finc excluded vert
+	var svi := Vector3i(-1,-1,-1) # cache side verticies indexes
+	var svis : int = 0
 	for i in 4:
 		match len(verts[i]):
 			2:
+				# TODO: take advantage of tetrahedron retriving to add tetrahedra
 				tet.indicies[i] = tetrahedrons.databuff[verts[i][0]].indicies[verts[i][1]]
+				if (nvc != -2) && ((nvc == -1) || (i < 3)):
+					svi[i] = tet.indicies[i]
+					svis += 1
 				#iv |= 1<<i
 			3:
 				var ind := tetmesh.alloc_val(VolTetVert.new(verts[i]))
 				tet.indicies[i] = ind
-				match lev:
+				match nvc:
 					-1:
-						lev = i # probably will need real vert id
+						nvc = i # probably will need real vert id
 					-2:
 						pass
 					_:
-						lev = -2
+						nvc = -2
 		vtas[i] = tetmesh.databuff[tet.indicies[i]].tets # adding objects to a list for later use
 	# TODO : face linking (tet.neighbours)
 	# for reference see get_tet_face(vtas,ev)
 	# were replaces with direct array construction to skip function calls
 	# needs benchmarking, if const tet_faces changed, use lines with get_tet_face
-	match lev:
+	match nvc:
 		-1:
 			update_tet_neighs(tet,vtas,neighs)
 		-2:
 			pass
 		_:
-			update_side_neigh(tet,vtas,lev,neighs[lev])
+			update_side_neigh(tet,vtas,nvc,svi,neighs[nvc])
 	#match (iv): # invert this
 	#	7:	# 0111 	[1,3,2]
 	#		update_side_neigh(tet,vtas,0,neighs[0])
@@ -191,6 +208,7 @@ func load_tmi(tmi : Array):
 		0:
 			var matb := 0
 			var ti = tmi[1]
+			# TODO: use clear_alloc for multithreaded and faster loading
 			tetrahedrons.resize(ti.size())
 			for i in len(ti):
 				var mt = ti[i]

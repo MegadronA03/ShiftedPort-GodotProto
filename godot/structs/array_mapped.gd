@@ -11,8 +11,8 @@ var alloc_size : int
 func _init(buffbody = null):
 	match typeof(buffbody):
 		28,29,30,31,32,33,34,35,36,37: # arrays and packed arrays
+			clear_alloc(buffbody.size())
 			databuff = buffbody
-			mempbuff.resize(buffbody.size())
 
 #func _get_property_list():
 #	var pl : Dictionary = a._get_property_list()
@@ -104,6 +104,14 @@ func alloc_val(value) -> int:
 	var a := alloc()
 	databuff[a] = value
 	return a
+
+func clear_alloc(s:int):
+	mempbuff.resize(s)
+	mempbuff = range(s)
+	size = s
+	alloc_size = s
+	if databuff:
+		databuff.resize(s)
 
 # TODO: add sorted variants
 func get_data_array(data = databuff) -> Array:
