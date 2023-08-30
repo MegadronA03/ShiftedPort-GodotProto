@@ -7,8 +7,8 @@ var visible_mesh : ArrayMesh # Array mesh with computed visible surfaces
 @export var tet_instr : Array = [] # store data on how to constuct mesh form tets
 var tetmesh_verts : PackedVector3Array # verts of tetrahedrons (do not use in visible_mesh)
 #var tetmesh_cache : PackedByteArray # cache for faster tetrahedron manipulation
-var tetmesh := ArrayMapped.new(Array(range(256)))
-var tetrahedrons := ArrayMapped.new(Array(range(64)))
+var tetmesh := ArrayMapped.new()
+var tetrahedrons := ArrayMapped.new()
 var unpacked := false
 var volume : float
 const tet_faces := [[1,3,2],[2,3,0],[3,1,0],[0,2,1]]
@@ -33,7 +33,8 @@ class VolTetUnit:
 
 class VolTetVert:
 	var vert : Vector3 # vertex
-	var ts := ArrayMapped.new(PackedInt32Array([])) # tetrahedrons with that vert
+	# TODO: implement custom structure with fast item adding in sorted order (like binary search tree)
+	var tets := ArrayMapped.new(PackedInt32Array([])) # tetrahedrons with that vert
 	func _init(v = null):
 		match typeof(v):
 			TYPE_VECTOR3,TYPE_VECTOR3I:
@@ -59,9 +60,9 @@ func get_tet_verts(tet : VolTetUnit) -> PackedVector3Array:
 		tetmesh_verts[tet.indicies[2]],
 		tetmesh_verts[tet.indicies[3]]])
 
-# used with data from get_tet_verts() and returns verticies of tet face
-func get_tet_face(tet_v : PackedVector3Array, excluded_vert : int) -> PackedVector3Array:
-	return PackedVector3Array([
+# used to get face from one tet locally
+func get_tet_face_elements(tet_v : Array, excluded_vert : int) -> Array:
+	return Array([
 		tet_v[tet_faces[excluded_vert][0]],
 		tet_v[tet_faces[excluded_vert][1]],
 		tet_v[tet_faces[excluded_vert][2]]])
@@ -69,21 +70,73 @@ func get_tet_face(tet_v : PackedVector3Array, excluded_vert : int) -> PackedVect
 func get_tet_material(tet:VolTetUnit):
 	return materials[tet.material_id]
 
-func add_free(verts : Array, mat : int, neighs : PackedInt32Array = []) -> void:
+# TODO: get side id from indicies
+func get_tet_ev():
+	pass
+
+# TODO: tetrahderon neighbour link
+func link_tet_neighbours(tet0:VolTetUnit,ev0:int,tet1:VolTetUnit,ev1:int=-1) -> void:
+	pass
+
+func find_side_neigh(tet : VolTetUnit, vtas : Array):
+	# do a little sorting for order checking without useless reads
+	var voc : PackedByteArray = [0,1,2]
+	if vtas[0].size > vtas[1].size:
+		voc = [1,0,2]
+	if vtas[voc[1]].size > vtas[2].size:
+		voc = [1,2,voc[1]]
+	if vtas[voc[0]].size > vtas[voc[1]].size:
+		voc = [voc[1],voc[0],voc[2]]
+	
+	# TODO : method with bsearch()
+	for ti0 in vtas[voc[0]].get_data_array():
+		for ti1 in vtas[voc[1]].get_data_array():
+			if ti0 == ti1:
+				for ti2 in vtas[voc[2]].get_data_array():
+					if ti0 == ti2:
+						return # return neighbour ID and his side
+
+func update_side_neigh(tet : VolTetUnit, vtas : Array, ev : int, n = null) -> void:
+	if n == null:
+		n = find_side_neigh(tet,get_tet_face_elements(vtas,ev))
+	link_tet_neighbours(tet,ev,n[0],n[1]) # TODO: think about on what side linking gonna happen
+
+func update_tet_neighs(tet : VolTetUnit, vtas : Array, neighs : Array = [null,null,null,null]) -> void:
+	pass
+
+func add_free(verts : Array, mat : int, neighs : PackedInt32Array = [-1,-1,-1,-1]) -> void:
 	var tet := VolTetUnit.new()
 	var tet_id := tetrahedrons.alloc_val(tet)
 	tet.self_id = tet_id
+	var vtas : Array = [null,null,null,null] # holds vector tetrahedron arrays
+	var iv := 0
 	for i in 4:
-		var wv : VolTetVert
 		match len(verts[i]):
 			2:
 				tet.indicies[i] = tetrahedrons.databuff[verts[i][0]].indicies[verts[i][1]]
+				iv |= 1<<i
 			3:
 				var ind := tetmesh.alloc_val(VolTetVert.new(verts[i]))
 				tet.indicies[i] = ind
-		wv = tetmesh.databuff[tet.indicies[i]]
-		wv.ts.alloc_val(tet_id)
-	# TODO : face linking (tet.neighbours) probably gonna do string magic
+		vtas[i] = tetmesh.databuff[tet.indicies[i]].tets # adding objects to a list for later use
+	# TODO : face linking (tet.neighbours)
+	# for reference see get_tet_face(vtas,ev)
+	# were replaces with direct array construction to skip function calls
+	# needs benchmarking, if const tet_faces changed, use lines with get_tet_face
+	match (iv):
+		0b0111: # 7 	[1,3,2]
+			update_side_neigh(tet,vtas,0,neighs[0])
+		0b1011: # 11	[2,3,0]
+			update_side_neigh(tet,vtas,1,neighs[1])
+		0b1101: # 13	[3,1,0]
+			update_side_neigh(tet,vtas,2,neighs[2])
+		0b1110: # 14	[0,2,1]
+			update_side_neigh(tet,vtas,3,neighs[3])
+		0b1111: # 15
+			update_tet_neighs(tet,vtas,neighs)
+	for i in 4: # add tet to verts after neigh check to skip self checks
+		# TODO: implement sorting for bsearch() fast neighbour adding
+		vtas[i].alloc_val(tet_id)
 
 # add first tet to the tet array
 func add_origin(verts3 : PackedVector3Array, mat : int ) -> void:
@@ -121,6 +174,7 @@ func load_tmi(tmi : Array):
 		0:
 			var matb := 0
 			var ti = tmi[1]
+			tetrahedrons.resize(ti.size())
 			for i in len(ti):
 				var mt = ti[i]
 				if mt.has(1):
