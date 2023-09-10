@@ -77,12 +77,13 @@ func get_tet_ev():
 
 # TODO: tetrahderon neighbour link
 func link_tet_neighbours(tet0:VolTetUnit,ev0:int,tet1:VolTetUnit,ev1:int=-1) -> void:
+	
 	pass
 
 func link_tet_neighbours_2w(tet0:VolTetUnit,ev0:int,tet1:VolTetUnit,ev1:int=-1) -> void:
 	pass
 
-func find_side_neigh(tet : VolTetUnit, vtas : Array, svi : Vector3i):
+func find_side_neigh(tet : VolTetUnit, vtas : Array, svi : Vector3i) -> Array:
 	# do a little sorting for order checking without useless reads
 	var voc : PackedByteArray = [0,1,2]
 	if vtas[0].size > vtas[1].size:
@@ -94,35 +95,36 @@ func find_side_neigh(tet : VolTetUnit, vtas : Array, svi : Vector3i):
 	
 	for ti0 in vtas[voc[0]].get_data_array():
 		# TODO: pick ti0 tetrahedra and start checking its sides
+		# create buffer with tet vert indicies
 		var scbuff := ArrayMapped.new(PackedInt32Array(tetrahedrons.databuff[ti0].indexes))
+		# iterate each side index inside that buffer
 		for vi in svi:
 			for si in scbuff.get_data_array():
+				# check of they're equal
 				if vi == si:
-					# TODO: finish it
 					scbuff.remove_at(si)
 					break
-		# comparing 3 indicies across list is inefficient
-		#for ti1 in vtas[voc[1]].get_data_array():
-		#	if ti0 == ti1:
-		#		for ti2 in vtas[voc[2]].get_data_array():
-		#			if ti0 == ti2:
-		#				
-		#				return # return neighbour ID and his side
+		# if face is found inside neighbour indicies
+		if scbuff.size == 1:
+			return [ # return neighbour and its side
+				tetrahedrons.databuff[ti0],
+				scbuff.alloc_size] # physical position of the last element inside an array
+	return [] # case when ther no therahedron 
 
-func update_side_neigh(tet : VolTetUnit, vtas : Array, ev : int, svi : Vector3i, n = null) -> void:
-	if n == null:
+func update_side_neigh(tet : VolTetUnit, vtas : Array, ev : int, svi : Vector3i, n : Array = []) -> void:
+	if n == []:
 		n = find_side_neigh(tet,get_tet_face_elements(vtas,ev),svi)
-	link_tet_neighbours(tet,ev,n[0],n[1]) # TODO: think about on what side linking gonna happen
+	if n == []:
+		link_tet_neighbours(tet,ev,n[0],n[1]) # TODO: think about on what side linking gonna happen
 
-func update_tet_neighs(tet : VolTetUnit, vtas : Array, neighs : Array = [null,null,null,null]) -> void:
+func update_tet_neighs(tet : VolTetUnit, vtas : Array, neighs : Array = [[],[],[],[]]) -> void:
 	pass
 
-func add_free(verts : Array, mat : int, neighs : PackedInt32Array = [-1,-1,-1,-1]) -> void:
+func add_free(verts : Array, mat : int, neighs : Array = [[],[],[],[]]) -> void:
 	var tet := VolTetUnit.new()
 	var tet_id := tetrahedrons.alloc_val(tet)
 	tet.self_id = tet_id
 	var vtas : Array = [null,null,null,null] # holds vector tetrahedron arrays
-	#var iv :int = 0 # indexed vectors
 	# new vertex code (-1 NOTHING, -2 MORE_THAN_2)
 	var nvc : int = -1 # helps to finc excluded vert
 	var svi := Vector3i(-1,-1,-1) # cache side verticies indexes
@@ -152,23 +154,12 @@ func add_free(verts : Array, mat : int, neighs : PackedInt32Array = [-1,-1,-1,-1
 	# were replaces with direct array construction to skip function calls
 	# needs benchmarking, if const tet_faces changed, use lines with get_tet_face
 	match nvc:
-		-1:
+		-1: # tetrahedron have up to 4 neighbours
 			update_tet_neighs(tet,vtas,neighs)
-		-2:
+		-2: # no need to link, because this tetrahedron doest have any neighbour
 			pass
-		_:
+		_: # tetrahedron has up to 1 neighbours
 			update_side_neigh(tet,vtas,nvc,svi,neighs[nvc])
-	#match (iv): # invert this
-	#	7:	# 0111 	[1,3,2]
-	#		update_side_neigh(tet,vtas,0,neighs[0])
-	#	11:	# 1011	[2,3,0]
-	#		update_side_neigh(tet,vtas,1,neighs[1])
-	#	13:	# 1101	[3,1,0]
-	#		update_side_neigh(tet,vtas,2,neighs[2])
-	#	14:	# 1110	[0,2,1]
-	#		update_side_neigh(tet,vtas,3,neighs[3])
-	#	15:	# 1111
-	#		update_tet_neighs(tet,vtas,neighs)
 	for i in 4: # add tet to verts after neigh check to skip self checks
 		vtas[i].alloc_val(tet_id)
 
