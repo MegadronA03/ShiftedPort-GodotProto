@@ -14,10 +14,10 @@ var volume : float
 const tet_faces := [[1,3,2],[2,3,0],[3,1,0],[0,2,1]]
 
 class VolTetUnit:
-	var indicies : PackedInt32Array = [-1,-1,-1,-1]
+	var indicies : PackedInt32Array = [-1,-1,-1,-1] # should not contain -1
 	var neighbours : PackedInt32Array = [-1,-1,-1,-1]
 	var material_id : int
-	var self_id : int
+	var self_id : int # probably will cut
 	const tet_faces := [[1,3,2],[2,3,0],[3,1,0],[0,2,1]]
 	# return 3 indicies of tetrahedron that forms its face
 	func get_face(excuded_vert : int) -> PackedInt32Array:
@@ -45,13 +45,14 @@ class VolTetVert:
 # free up the space using defragmentation
 # might not be used if each vertex gonna have references to tetrahedrons
 # do not use with ArrayMapped
-func cleanup_tetverts():
-	var ta := tetrahedrons.get_data_array()
-	var tmv := PackedVector3Array()
-	tmv.resize(tetmesh_verts.size())
-	for t in ta:
-		pass
-	pass
+# depreciated
+#func cleanup_tetverts():
+#	var ta := tetrahedrons.get_data_array()
+#	var tmv := PackedVector3Array()
+#	tmv.resize(tetmesh_verts.size())
+#	for t in ta:
+#		pass
+#	pass
 
 # return 4 verts of tetrahedron
 func get_tet_verts(tet : VolTetUnit) -> PackedVector3Array:
@@ -76,14 +77,17 @@ func get_tet_ev():
 	pass
 
 # TODO: tetrahderon neighbour link
-func link_tet_neighbours(tet0:VolTetUnit,ev0:int,tet1:VolTetUnit,ev1:int=-1) -> void:
-	
-	pass
+#this one writes link only on 0 tet
+func link_tet_neighbours(teti0:int,ev0:int,teti1:int,ev1:int=-1) -> void:
+	tetrahedrons.databuff[teti0].neighbours[ev0] = teti1
 
-func link_tet_neighbours_2w(tet0:VolTetUnit,ev0:int,tet1:VolTetUnit,ev1:int=-1) -> void:
-	pass
+# TODO : check this and do some unit tests
+func link_tet_neighbours_2w(teti0:int,ev0:int,teti1:int,ev1:int=-1) -> void:
+	var tdb : Array = tetrahedrons.databuff
+	tdb[teti0].neighbours[ev0] = teti1
+	tdb[teti1].neighbours[ev1] = teti0
 
-func find_side_neigh(tet : VolTetUnit, vtas : Array, svi : Vector3i) -> Array:
+func find_side_neigh(vtas : Array, svi : Vector3i) -> PackedInt32Array:
 	# do a little sorting for order checking without useless reads
 	var voc : PackedByteArray = [0,1,2]
 	if vtas[0].size > vtas[1].size:
@@ -107,15 +111,15 @@ func find_side_neigh(tet : VolTetUnit, vtas : Array, svi : Vector3i) -> Array:
 		# if face is found inside neighbour indicies
 		if scbuff.size == 1:
 			return [ # return neighbour and its side
-				tetrahedrons.databuff[ti0],
+				ti0,
 				scbuff.alloc_size] # physical position of the last element inside an array
 	return [] # case when ther no therahedron 
 
-func update_side_neigh(tet : VolTetUnit, vtas : Array, ev : int, svi : Vector3i, n : Array = []) -> void:
+func update_side_neigh(tet_id : int, vtas : Array, ev : int, svi : Vector3i, n : Array = []) -> void:
 	if n == []:
-		n = find_side_neigh(tet,get_tet_face_elements(vtas,ev),svi)
+		n = find_side_neigh(get_tet_face_elements(vtas,ev),svi)
 	if n == []:
-		link_tet_neighbours(tet,ev,n[0],n[1]) # TODO: think about on what side linking gonna happen
+		link_tet_neighbours_2w(tet_id,ev,n[0],n[1]) # TODO: think about on what side linking gonna happen
 
 func update_tet_neighs(tet : VolTetUnit, vtas : Array, neighs : Array = [[],[],[],[]]) -> void:
 	pass
@@ -159,7 +163,7 @@ func add_free(verts : Array, mat : int, neighs : Array = [[],[],[],[]]) -> void:
 		-2: # no need to link, because this tetrahedron doest have any neighbour
 			pass
 		_: # tetrahedron has up to 1 neighbours
-			update_side_neigh(tet,vtas,nvc,svi,neighs[nvc])
+			update_side_neigh(tet_id,vtas,nvc,svi,neighs[nvc])
 	for i in 4: # add tet to verts after neigh check to skip self checks
 		vtas[i].alloc_val(tet_id)
 
@@ -172,7 +176,9 @@ func add_from_face(tet_id, face_id, vert, mat) -> void:
 	
 	pass
 
+# TODO: finish
 func remove_tet(tet_id:int):
+	# TODO : remove tet form its neighbours and from verts
 	tetrahedrons.remove_at(tet_id)
 	pass
 
