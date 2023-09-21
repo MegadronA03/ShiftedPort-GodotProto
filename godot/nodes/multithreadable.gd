@@ -7,5 +7,5 @@ func _init(instructions):
 func compile(): # return callable with checks
 	pass
 
-func execute(): # return this woth automatically callable binded
+func execute(c:Callable,size:int,varargs:Array): # return this woth automatically callable binded
 	pass
