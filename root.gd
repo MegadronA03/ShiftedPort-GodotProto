@@ -8,7 +8,6 @@ var test_scene = preload("res://game/scenes/origins_test.tscn")
 func _ready():
 	set_name.call_deferred("Iroot")
 	var t
-	
 	#print(al[0])
 	#var c
 	#print_debug(DisplayServer.screen_get_dpi())

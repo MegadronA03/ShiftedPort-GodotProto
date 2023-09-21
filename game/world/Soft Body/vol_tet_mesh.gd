@@ -179,7 +179,14 @@ func add_from_face(tet_id, face_id, vert, mat) -> void:
 # TODO: finish
 func remove_tet(tet_id:int):
 	# TODO : remove tet form its neighbours and from verts
+	var pending : VolTetUnit = tetrahedrons.databuff[tet_id]
+	# TODO : multithread this (gpu could be used there)
+	for v in pending.indicies:
+		pass
+	for v in pending.neighbours:
+		pass
 	tetrahedrons.remove_at(tet_id)
+	
 	pass
 
 func place_tet(instruction : Array, mat : int = 0, new_mat : bool = false) -> void:
