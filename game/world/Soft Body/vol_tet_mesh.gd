@@ -124,6 +124,7 @@ func update_side_neigh(tet_id : int, vtas : Array, ev : int, svi : Vector3i, n :
 func update_tet_neighs(tet : VolTetUnit, vtas : Array, neighs : Array = [[],[],[],[]]) -> void:
 	pass
 
+#TODO: rewrite this class as C module
 func add_free(verts : Array, mat : int, neighs : Array = [[],[],[],[]]) -> void:
 	var tet := VolTetUnit.new()
 	var tet_id := tetrahedrons.alloc_val(tet)
@@ -134,16 +135,29 @@ func add_free(verts : Array, mat : int, neighs : Array = [[],[],[],[]]) -> void:
 	var svi := Vector3i(-1,-1,-1) # cache side verticies indexes
 	var svis : int = 0
 	for i in 4:
-		match len(verts[i]):
-			2:
+		if verts[i] is Vector3:
+			var ind := tetmesh.alloc_val(VolTetVert.new(verts[i]))
+			tet.indicies[i] = ind
+			match nvc:
+				-1:
+					nvc = i # probably will need real vert id
+				-2:
+					pass
+				_:
+					nvc = -2
+		else:
+			if len(verts[i]) == 2:
 				# TODO: take advantage of tetrahedron retriving to add tetrahedra
 				tet.indicies[i] = tetrahedrons.databuff[verts[i][0]].indicies[verts[i][1]]
 				if (nvc != -2) && ((nvc == -1) || (i < 3)):
 					svi[i] = tet.indicies[i]
 					svis += 1
 				#iv |= 1<<i
-			3:
-				var ind := tetmesh.alloc_val(VolTetVert.new(verts[i]))
+			else:
+				var ind := tetmesh.alloc_val(VolTetVert.new(Vector3(
+					verts[i][0],
+					verts[i][1],
+					verts[i][2])))
 				tet.indicies[i] = ind
 				match nvc:
 					-1:
@@ -169,12 +183,14 @@ func add_free(verts : Array, mat : int, neighs : Array = [[],[],[],[]]) -> void:
 
 # add first tet to the tet array
 func add_origin(verts3 : PackedVector3Array, mat : int ) -> void:
-	
-	pass
+	var verts := [Vector3.ZERO, verts3[0], verts3[1], verts3[2]]
+	add_free(verts, mat)
 
 func add_from_face(tet_id, face_id, vert, mat) -> void:
-	
-	pass
+	var tet = tetrahedrons.databuff[tet_id]
+	var face_verts = tet.get_face(face_id)
+	var verts := [face_verts[0], face_verts[1], face_verts[2], vert]
+	add_free(verts, mat, [[],[],[],[tet_id,face_id]])
 
 # TODO: finish
 func remove_tet(tet_id:int):
