@@ -20,11 +20,11 @@ class VolTetUnit:
 	var self_id : int # probably will cut
 	const tet_faces := [[1,3,2],[2,3,0],[3,1,0],[0,2,1]]
 	# return 3 indicies of tetrahedron that forms its face
-	func get_face(excuded_vert : int) -> PackedInt32Array:
-		return PackedInt32Array([
+	func get_face(excuded_vert : int) -> Vector3i:
+		return Vector3i(
 			indicies[tet_faces[excuded_vert][0]],
 			indicies[tet_faces[excuded_vert][1]],
-			indicies[tet_faces[excuded_vert][2]]])
+			indicies[tet_faces[excuded_vert][2]])
 	func _init(indicies=null):
 		
 		pass
@@ -87,7 +87,7 @@ func link_tet_neighbours_2w(teti0:int,ev0:int,teti1:int,ev1:int=-1) -> void:
 	tdb[teti0].neighbours[ev0] = teti1
 	tdb[teti1].neighbours[ev1] = teti0
 
-func find_side_neigh(vtas : Array, svi : Vector3i) -> PackedInt32Array:
+func find_side_neigh(vtas : Array, side_vertex_indices : Vector3i) -> PackedInt32Array:
 	# do a little sorting for order checking without useless reads
 	var voc : PackedByteArray = [0,1,2]
 	if vtas[0].size > vtas[1].size:
@@ -102,7 +102,7 @@ func find_side_neigh(vtas : Array, svi : Vector3i) -> PackedInt32Array:
 		# create buffer with tet vert indicies
 		var scbuff := ArrayMapped.new(PackedInt32Array(tetrahedrons.databuff[ti0].indexes))
 		# iterate each side index inside that buffer
-		for vi in svi:
+		for vi in side_vertex_indices:
 			for si in scbuff.get_data_array():
 				# check of they're equal
 				if vi == si:
@@ -113,7 +113,7 @@ func find_side_neigh(vtas : Array, svi : Vector3i) -> PackedInt32Array:
 			return [ # return neighbour and its side
 				ti0,
 				scbuff.alloc_size] # physical position of the last element inside an array
-	return [] # case when ther no therahedron 
+	return [] # case when there's no therahedron 
 
 func update_side_neigh(tet_id : int, vtas : Array, ev : int, svi : Vector3i, n : Array = []) -> void:
 	if n == []:
@@ -121,15 +121,25 @@ func update_side_neigh(tet_id : int, vtas : Array, ev : int, svi : Vector3i, n :
 	if n == []:
 		link_tet_neighbours_2w(tet_id,ev,n[0],n[1]) # TODO: think about on what side linking gonna happen
 
-func update_tet_neighs(tet : VolTetUnit, vtas : Array, neighs : Array = [[],[],[],[]]) -> void:
-	pass
+#TODO : skip added neighbours
+func update_tet_neighs(tet_id : int, vtas : Array, neighs : Array = [[],[],[],[]]) -> void:
+	var tet : VolTetUnit = tetrahedrons.databuff[tet_id]
+	#TODO: do check in the same style as in find_side_neigh
+	
+	#Phind version (naive approach)
+	for i in range(4):
+		if neighs[i] == []:
+			var svi : Vector3 = tet.get_face(i)
+			update_side_neigh(tet_id, vtas, i, svi)
+		else:
+			link_tet_neighbours_2w(tet_id, i, neighs[i][0], neighs[i][1])
 
 #TODO: rewrite this class as C module
 func add_free(verts : Array, mat : int, neighs : Array = [[],[],[],[]]) -> void:
 	var tet := VolTetUnit.new()
 	var tet_id := tetrahedrons.alloc_val(tet)
 	tet.self_id = tet_id
-	var vtas : Array = [null,null,null,null] # holds vector tetrahedron arrays
+	var vtas : Array = [null,null,null,null] # holds vertex's tetrahedron arrays
 	# new vertex code (-1 NOTHING, -2 MORE_THAN_2)
 	var nvc : int = -1 # helps to finc excluded vert
 	var svi := Vector3i(-1,-1,-1) # cache side verticies indexes
@@ -173,7 +183,7 @@ func add_free(verts : Array, mat : int, neighs : Array = [[],[],[],[]]) -> void:
 	# needs benchmarking, if const tet_faces changed, use lines with get_tet_face
 	match nvc:
 		-1: # tetrahedron have up to 4 neighbours
-			update_tet_neighs(tet,vtas,neighs)
+			update_tet_neighs(tet_id,vtas,neighs)
 		-2: # no need to link, because this tetrahedron doest have any neighbour
 			pass
 		_: # tetrahedron has up to 1 neighbours
@@ -192,18 +202,24 @@ func add_from_face(tet_id, face_id, vert, mat) -> void:
 	var verts := [face_verts[0], face_verts[1], face_verts[2], vert]
 	add_free(verts, mat, [[],[],[],[tet_id,face_id]])
 
-# TODO: finish
 func remove_tet(tet_id:int):
 	# TODO : remove tet form its neighbours and from verts
 	var pending : VolTetUnit = tetrahedrons.databuff[tet_id]
-	# TODO : multithread this (gpu could be used there)
-	for v in pending.indicies:
-		pass
-	for v in pending.neighbours:
-		pass
+	# TODO : multithread this (gpu could be used there, if performance issues)
+	for vi in pending.indicies:
+		var vertex : VolTetVert = tetmesh.databuff[vi]
+		for tv in vertex.tets.size:
+			var gdai : int = vertex.tets.mempbuff[tv]
+			if vertex.tets.databuff[gdai] == tet_id:
+				vertex.tets.remove_at(gdai)
+				break
+	for ni in pending.neighbours:
+		var neighbour : VolTetUnit = tetrahedrons.databuff[ni]
+		for nnii in 4:
+			if neighbour.neighbours[nnii] == tet_id:
+				neighbour.neighbours[nnii] = -1
+				break
 	tetrahedrons.remove_at(tet_id)
-	
-	pass
 
 func place_tet(instruction : Array, mat : int = 0, new_mat : bool = false) -> void:
 	match len(instruction):
@@ -294,4 +310,3 @@ func merge(tetm0 : VolTetMesh, tetm1 : VolTetMesh) -> void: # merge 2 meshes
 
 func update_volume():
 	pass
-
